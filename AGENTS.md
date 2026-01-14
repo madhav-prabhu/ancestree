@@ -55,6 +55,7 @@ We define custom agents by creating detailed prompts that get passed to `general
 │  - Reads project state                  │
 │  - Decides which specialists to invoke  │
 │  - Coordinates parallel work            │
+│  - ENFORCES verification at each step   │
 │  - Synthesizes results                  │
 └─────────────────┬───────────────────────┘
                   │
@@ -64,7 +65,44 @@ We define custom agents by creating detailed prompts that get passed to `general
 │Frontend│  │    3D    │  │  Data  │  │Code Review│
 │ Agent  │  │  Agent   │  │ Agent  │  │   Agent   │
 └────────┘  └──────────┘  └────────┘  └───────────┘
+    │             │             │             │
+    └─────────────┴──────┬──────┴─────────────┘
+                         ▼
+              ┌─────────────────────┐
+              │  VERIFICATION AGENT │
+              │  - Runs build       │
+              │  - Runs tests       │
+              │  - Starts dev server│
+              │  - Confirms feature │
+              │  - Reports pass/fail│
+              └─────────────────────┘
 ```
+
+## Mandatory Verification Workflow
+
+**⚠️ CRITICAL: No feature is complete until verified.**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    VERIFICATION LOOP                         │
+│                                                              │
+│   ┌─────────┐     ┌──────────┐     ┌─────────────────────┐  │
+│   │Implement│ ──► │ Verify   │ ──► │ Pass?               │  │
+│   │Feature  │     │(mandatory)│     │ ├─Yes─► Continue    │  │
+│   └─────────┘     └──────────┘     │ └─No──► Fix & Loop  │  │
+│                         ▲          └─────────────────────┘  │
+│                         │                    │              │
+│                         └────────────────────┘              │
+│                              (if failed)                    │
+└──────────────────────────────────────────────────────────────┘
+```
+
+The Orchestrator MUST invoke the Verification Agent after every feature implementation. Verification includes:
+1. Build compiles without errors
+2. All tests pass
+3. Dev server starts successfully
+4. Feature works as expected
+5. User confirms UI changes (when applicable)
 
 ## How to Invoke Agents
 
@@ -199,7 +237,8 @@ Have the Orchestrator pause for human review after major changes:
 │   ├── frontend.md          # Frontend specialist prompt
 │   ├── three-d.md           # 3D/Visualization specialist prompt
 │   ├── data.md              # Data layer specialist prompt
-│   └── code-review.md       # Code review specialist prompt
+│   ├── code-review.md       # Code review specialist prompt
+│   └── verification.md      # Testing & deployment verification
 └── state/
     └── decisions.md         # Shared architectural decisions
 ```
