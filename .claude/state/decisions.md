@@ -216,4 +216,130 @@ This file tracks key architectural decisions for the Ancestree project. Agents s
 
 ---
 
+## Phase 4: 3D Visualization Enhancement - COMPLETE
+**Date**: 2026-01-13
+
+### Decision Summary
+Implemented comprehensive 3D visualization enhancements including tree layout algorithm, connection lines, improved nodes, camera navigation, and performance optimizations.
+
+### Step 4.1: Tree Layout Algorithm
+**Files**: `src/scene/layout/treeLayout.ts`, `src/scene/layout/index.ts`
+
+**Algorithm Features**:
+- Calculates positions based on family relationships
+- Y-axis represents generations (parents above children)
+- Spouses positioned side-by-side at same level
+- Siblings spread horizontally
+- Handles complex trees (remarriage, multiple spouses)
+- Minimizes overlaps with automatic resolution
+
+**Key Functions**:
+- `calculateTreeLayout()`: Main layout computation
+- `calculateGenerationMap()`: Returns generation levels for each member
+- `getBoundingBox()`: Calculates tree bounds for camera positioning
+- `getGeneration()`, `getMaxGeneration()`: Generation utilities
+
+### Step 4.2: Connection Lines
+**Files**: `src/scene/ConnectionLines.tsx`
+
+**Line Types**:
+- Parent-child: L-shaped blue lines (`#60a5fa`)
+- Spouse: Curved pink lines (`#f472b6`) with upward arc
+- Sibling: Dashed green curved lines (`#34d399`)
+
+**Implementation**:
+- Uses `@react-three/drei` Line and QuadraticBezierLine components
+- Different line widths per relationship type
+- Smart positioning to avoid node overlaps
+
+### Step 4.3: Node Improvements
+**Files**: `src/scene/FamilyNode.tsx`
+
+**Visual Enhancements**:
+- Circular avatar with member initials
+- Generation-based color coding (6 colors for different generations)
+- Living vs deceased distinction (opacity, dagger symbol)
+- Selected state with amber glow and ring
+- Hoverable with emerald highlight
+- Date/age display on nodes
+- Generation badge indicator
+
+**Generation Colors**:
+```
+Gen 0: Blue (#3b82f6)
+Gen 1: Purple (#8b5cf6)
+Gen 2: Cyan (#06b6d4)
+Gen 3: Emerald (#10b981)
+Gen 4: Amber (#f59e0b)
+Gen 5+: Red (#ef4444)
+```
+
+### Step 4.4: Camera Navigation
+**Files**: `src/scene/CameraController.tsx`
+
+**Features**:
+- **Focus on member**: Smooth camera animation to selected node
+- **Fit all**: Zoom to show entire tree (Home key)
+- **Keyboard navigation**:
+  - Arrow Left/Right: Navigate to prev/next member
+  - Arrow Up/Down: Navigate to member in parent/child direction
+  - F: Focus on selected member
+  - Home: Fit all members in view
+- Eased animation transitions (cubic ease-out)
+- Auto-focus when member selection changes
+
+### Step 4.5: Scene Optimization
+**Files**: `src/scene/OptimizedFamilyNode.tsx`, `src/scene/TreeScene.tsx`
+
+**Performance Features**:
+- **LOD (Level of Detail)**: Simplified rendering for distant nodes
+  - Near view: Full detail with text, avatar, badges
+  - Far view: Simple box with basic coloring
+- **Optimization threshold**: 30 members triggers optimized mode
+- **Adaptive DPR**: Adjusts pixel ratio for performance
+- **Performance Monitor**: Built-in @react-three/drei monitoring
+- **Conditional rendering**:
+  - Environment map disabled for large trees
+  - Reduced point lights
+  - On-demand frame loop for large trees
+- **Memoization**: Components wrapped with React.memo
+
+**Threshold Settings**:
+- < 30 members: Full quality (environment, damping, full DPR)
+- >= 30 members: Optimized (LOD nodes, reduced effects, lower DPR)
+
+### Testing
+- 194 tests passing (19 new tests for tree layout)
+- Layout algorithm fully tested with various tree structures
+- Tests cover single member, parent-child, spouse pairs, complex families
+
+### Verification: PASSED
+- Build: Success (614 modules)
+- Tests: 194/194 passing
+- All features integrated and working
+- Dev server runs without errors
+
+### Component Architecture
+```
+TreeScene
+├── SceneContent (memoized)
+│   ├── PerformanceMonitor
+│   ├── AdaptiveDpr
+│   ├── Lighting (conditional)
+│   ├── Environment (conditional)
+│   ├── CameraController
+│   ├── ConnectionLines
+│   ├── FamilyNode / OptimizedFamilyNode (per member)
+│   └── OrbitControls
+└── Canvas (with performance settings)
+```
+
+### Next Steps
+- Phase 5: Export/Import features
+- Future: Real-time collaboration, cloud sync
+
+**Affected areas**: `src/scene/`, `src/App.tsx`
+
+---
+
 <!-- Add new decisions above this line -->

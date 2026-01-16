@@ -21,6 +21,8 @@ interface AddRelationshipModalProps {
     person2Id: string,
     metadata?: { marriageDate?: string; divorceDate?: string }
   ) => Promise<void>
+  /** Callback to create a new member - returns the new member's ID */
+  onCreateMember?: (data: { name: string; dateOfBirth?: string }) => Promise<string>
   members: FamilyMember[]
   /** Pre-selected member (e.g., when opened from detail panel) */
   preSelectedMemberId?: string
@@ -33,8 +35,12 @@ interface FormErrors {
   person1?: string
   person2?: string
   marriageDate?: string
+  newMemberName?: string
   general?: string
 }
+
+/** Special value to indicate creating a new member */
+const CREATE_NEW_MEMBER = '__create_new__'
 
 type RelationshipTypeOption = {
   value: RelationshipType
@@ -72,6 +78,7 @@ export function AddRelationshipModal({
   isOpen,
   onClose,
   onSubmit,
+  onCreateMember,
   members,
   preSelectedMemberId,
   preSelectedType,
@@ -80,17 +87,35 @@ export function AddRelationshipModal({
   const [relationshipType, setRelationshipType] = useState<RelationshipType | ''>('')
   const [person1Id, setPerson1Id] = useState('')
   const [person2Id, setPerson2Id] = useState('')
+  // For parent-child: determines if we're adding a parent or child to the selected member
+  const [parentChildDirection, setParentChildDirection] = useState<'add-child' | 'add-parent'>('add-child')
   const [marriageDate, setMarriageDate] = useState('')
+
+  // New member form state (when creating a new member inline)
+  const [newMemberName, setNewMemberName] = useState('')
+  const [newMemberDob, setNewMemberDob] = useState('')
 
   // UI state
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Check if we're creating a new member
+  const isCreatingNewMember = person2Id === CREATE_NEW_MEMBER
 
   // Refs
   const modalRef = useRef<HTMLDivElement>(null)
 
   // Get the current type configuration
   const currentTypeConfig = RELATIONSHIP_TYPES.find((t) => t.value === relationshipType)
+
+  // For parent-child, compute labels based on direction
+  const person1Label = relationshipType === 'parent-child'
+    ? (parentChildDirection === 'add-child' ? 'Parent' : 'Child')
+    : (currentTypeConfig?.person1Label || 'First Person')
+
+  const person2Label = relationshipType === 'parent-child'
+    ? (parentChildDirection === 'add-child' ? 'Child' : 'Parent')
+    : (currentTypeConfig?.person2Label || 'Second Person')
 
   // Reset form when modal opens
   useEffect(() => {
@@ -99,6 +124,9 @@ export function AddRelationshipModal({
       setPerson1Id(preSelectedMemberId || '')
       setPerson2Id('')
       setMarriageDate('')
+      setNewMemberName('')
+      setNewMemberDob('')
+      setParentChildDirection('add-child')
       setErrors({})
       setIsSubmitting(false)
     }
@@ -137,17 +165,24 @@ export function AddRelationshipModal({
 
     // Person 1 is required
     if (!person1Id) {
-      newErrors.person1 = `Please select the ${currentTypeConfig?.person1Label.toLowerCase() || 'first person'}`
+      newErrors.person1 = `Please select the ${person1Label.toLowerCase()}`
     }
 
-    // Person 2 is required
+    // Person 2 is required (either existing member or creating new)
     if (!person2Id) {
-      newErrors.person2 = `Please select the ${currentTypeConfig?.person2Label.toLowerCase() || 'second person'}`
+      newErrors.person2 = `Please select the ${person2Label.toLowerCase()}`
     }
 
-    // Can't select the same person
-    if (person1Id && person2Id && person1Id === person2Id) {
-      newErrors.person2 = 'Cannot create a relationship with the same person'
+    // If creating new member, name is required
+    if (isCreatingNewMember) {
+      if (!newMemberName.trim()) {
+        newErrors.newMemberName = 'Name is required for the new family member'
+      }
+    } else {
+      // Can't select the same person (only check if not creating new)
+      if (person1Id && person2Id && person1Id === person2Id) {
+        newErrors.person2 = 'Cannot create a relationship with the same person'
+      }
     }
 
     // Validate marriage date if provided
@@ -176,10 +211,31 @@ export function AddRelationshipModal({
     setErrors({})
 
     try {
+      let actualPerson2Id = person2Id
+
+      // If creating a new member, create them first
+      if (isCreatingNewMember && onCreateMember) {
+        actualPerson2Id = await onCreateMember({
+          name: newMemberName.trim(),
+          dateOfBirth: newMemberDob || undefined,
+        })
+      }
+
       const metadata =
         relationshipType === 'spouse' && marriageDate ? { marriageDate } : undefined
 
-      await onSubmit(relationshipType as RelationshipType, person1Id, person2Id, metadata)
+      // For parent-child with 'add-parent' direction, swap the IDs
+      // because person1 is always parent and person2 is always child in the data model
+      let finalPerson1Id = person1Id
+      let finalPerson2Id = actualPerson2Id
+
+      if (relationshipType === 'parent-child' && parentChildDirection === 'add-parent') {
+        // person2 (the one we're adding) is the parent, person1 is the child
+        finalPerson1Id = actualPerson2Id
+        finalPerson2Id = person1Id
+      }
+
+      await onSubmit(relationshipType as RelationshipType, finalPerson1Id, finalPerson2Id, metadata)
       onClose()
     } catch (err) {
       setErrors({
@@ -250,13 +306,6 @@ export function AddRelationshipModal({
             </div>
           )}
 
-          {/* Not enough members warning */}
-          {members.length < 2 && (
-            <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-lg text-sm">
-              You need at least 2 family members to create a relationship.
-            </div>
-          )}
-
           {/* Relationship Type */}
           <div>
             <label
@@ -269,7 +318,7 @@ export function AddRelationshipModal({
               id="relationshipType"
               value={relationshipType}
               onChange={(e) => setRelationshipType(e.target.value as RelationshipType | '')}
-              disabled={isSubmitting || members.length < 2}
+              disabled={isSubmitting}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 ${
                 errors.type ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -287,23 +336,53 @@ export function AddRelationshipModal({
             )}
           </div>
 
+          {/* Direction toggle for parent-child relationships */}
+          {relationshipType === 'parent-child' && (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setParentChildDirection('add-child')}
+                disabled={isSubmitting}
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                  parentChildDirection === 'add-child'
+                    ? 'bg-emerald-100 border-emerald-500 text-emerald-700'
+                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                Add a Child
+              </button>
+              <button
+                type="button"
+                onClick={() => setParentChildDirection('add-parent')}
+                disabled={isSubmitting}
+                className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                  parentChildDirection === 'add-parent'
+                    ? 'bg-emerald-100 border-emerald-500 text-emerald-700'
+                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                Add a Parent
+              </button>
+            </div>
+          )}
+
           {/* Person 1 */}
           <div>
             <label htmlFor="person1" className="block text-sm font-medium text-gray-700 mb-1">
-              {currentTypeConfig?.person1Label || 'First Person'}{' '}
+              {person1Label}{' '}
               <span className="text-red-500">*</span>
             </label>
             <select
               id="person1"
               value={person1Id}
               onChange={(e) => setPerson1Id(e.target.value)}
-              disabled={isSubmitting || members.length < 2}
+              disabled={isSubmitting}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 ${
                 errors.person1 ? 'border-red-500' : 'border-gray-300'
               }`}
             >
               <option value="">
-                Select {currentTypeConfig?.person1Label.toLowerCase() || 'first person'}...
+                Select {person1Label.toLowerCase()}...
               </option>
               {person1Options.map((member) => (
                 <option key={member.id} value={member.id}>
@@ -318,21 +397,28 @@ export function AddRelationshipModal({
           {/* Person 2 */}
           <div>
             <label htmlFor="person2" className="block text-sm font-medium text-gray-700 mb-1">
-              {currentTypeConfig?.person2Label || 'Second Person'}{' '}
+              {person2Label}{' '}
               <span className="text-red-500">*</span>
             </label>
             <select
               id="person2"
               value={person2Id}
               onChange={(e) => setPerson2Id(e.target.value)}
-              disabled={isSubmitting || members.length < 2}
+              disabled={isSubmitting}
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 ${
                 errors.person2 ? 'border-red-500' : 'border-gray-300'
               }`}
             >
               <option value="">
-                Select {currentTypeConfig?.person2Label.toLowerCase() || 'second person'}...
+                Select {person2Label.toLowerCase()}...
               </option>
+              {/* Option to create a new member */}
+              {onCreateMember && (
+                <option value={CREATE_NEW_MEMBER} className="font-semibold text-emerald-600">
+                  ➕ Create new family member...
+                </option>
+              )}
+              {/* Existing members */}
               {person2Options.map((member) => (
                 <option key={member.id} value={member.id}>
                   {member.name}
@@ -342,6 +428,49 @@ export function AddRelationshipModal({
             </select>
             {errors.person2 && <p className="mt-1 text-sm text-red-600">{errors.person2}</p>}
           </div>
+
+          {/* New member form (shown when creating a new member) */}
+          {isCreatingNewMember && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 space-y-3">
+              <h3 className="text-sm font-medium text-emerald-800">
+                New {person2Label}
+              </h3>
+
+              <div>
+                <label htmlFor="newMemberName" className="block text-sm font-medium text-gray-700 mb-1">
+                  Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="newMemberName"
+                  value={newMemberName}
+                  onChange={(e) => setNewMemberName(e.target.value)}
+                  disabled={isSubmitting}
+                  placeholder="Enter name..."
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 ${
+                    errors.newMemberName ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+                {errors.newMemberName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.newMemberName}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="newMemberDob" className="block text-sm font-medium text-gray-700 mb-1">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  id="newMemberDob"
+                  value={newMemberDob}
+                  onChange={(e) => setNewMemberDob(e.target.value)}
+                  disabled={isSubmitting}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Marriage Date (only for spouse relationships) */}
           {relationshipType === 'spouse' && (
@@ -369,28 +498,28 @@ export function AddRelationshipModal({
           )}
 
           {/* Relationship Preview */}
-          {person1Id && person2Id && relationshipType && (
+          {person1Id && person2Id && relationshipType && (isCreatingNewMember ? newMemberName.trim() : true) && (
             <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg text-sm">
               <strong>Preview:</strong>{' '}
-              {relationshipType === 'parent-child' && (
-                <>
-                  {members.find((m) => m.id === person1Id)?.name} is the parent of{' '}
-                  {members.find((m) => m.id === person2Id)?.name}
-                </>
-              )}
-              {relationshipType === 'spouse' && (
-                <>
-                  {members.find((m) => m.id === person1Id)?.name} and{' '}
-                  {members.find((m) => m.id === person2Id)?.name} are spouses
-                  {marriageDate && ` (married ${marriageDate})`}
-                </>
-              )}
-              {relationshipType === 'sibling' && (
-                <>
-                  {members.find((m) => m.id === person1Id)?.name} and{' '}
-                  {members.find((m) => m.id === person2Id)?.name} are siblings
-                </>
-              )}
+              {(() => {
+                const person1Name = members.find((m) => m.id === person1Id)?.name || 'Unknown'
+                const person2Name = isCreatingNewMember ? `${newMemberName.trim()} (new)` : members.find((m) => m.id === person2Id)?.name || 'Unknown'
+
+                if (relationshipType === 'parent-child') {
+                  if (parentChildDirection === 'add-child') {
+                    return <>{person1Name} is the parent of {person2Name}</>
+                  } else {
+                    return <>{person2Name} is the parent of {person1Name}</>
+                  }
+                }
+                if (relationshipType === 'spouse') {
+                  return <>{person1Name} and {person2Name} are spouses{marriageDate && ` (married ${marriageDate})`}</>
+                }
+                if (relationshipType === 'sibling') {
+                  return <>{person1Name} and {person2Name} are siblings</>
+                }
+                return null
+              })()}
             </div>
           )}
 
@@ -406,7 +535,7 @@ export function AddRelationshipModal({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || members.length < 2}
+              disabled={isSubmitting}
               className="px-4 py-2 text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               {isSubmitting ? (

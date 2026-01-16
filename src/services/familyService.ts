@@ -161,6 +161,9 @@ export const familyService = {
 
   /**
    * Add a relationship between two members.
+   * For spouse relationships, automatically creates parent-child connections
+   * between the new spouse and existing children of the partner.
+   *
    * @param type - The type of relationship
    * @param person1Id - First person (for parent-child: the parent)
    * @param person2Id - Second person (for parent-child: the child)
@@ -227,7 +230,44 @@ export const familyService = {
     // Create and save the relationship
     const relationship = createRelationship(type, person1Id, person2Id, metadata)
     await storage.saveRelationship(relationship)
+
+    // For spouse relationships, automatically connect new spouse to existing children
+    if (type === 'spouse') {
+      await this.connectSpouseToChildren(person1Id, person2Id)
+    }
+
     return relationship
+  },
+
+  /**
+   * When a spouse relationship is created, automatically create parent-child
+   * relationships between the new spouse and any existing children.
+   * This makes the new spouse a parent of existing children from both sides.
+   */
+  async connectSpouseToChildren(spouse1Id: string, spouse2Id: string): Promise<void> {
+    // Get children of both spouses
+    const [children1, children2] = await Promise.all([
+      this.getChildren(spouse1Id),
+      this.getChildren(spouse2Id),
+    ])
+
+    // Connect spouse2 to spouse1's children (if not already connected)
+    for (const child of children1) {
+      const existingRel = await this.findExistingRelationship('parent-child', spouse2Id, child.id)
+      if (!existingRel) {
+        const rel = createRelationship('parent-child', spouse2Id, child.id)
+        await storage.saveRelationship(rel)
+      }
+    }
+
+    // Connect spouse1 to spouse2's children (if not already connected)
+    for (const child of children2) {
+      const existingRel = await this.findExistingRelationship('parent-child', spouse1Id, child.id)
+      if (!existingRel) {
+        const rel = createRelationship('parent-child', spouse1Id, child.id)
+        await storage.saveRelationship(rel)
+      }
+    }
   },
 
   /**

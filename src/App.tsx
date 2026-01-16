@@ -39,6 +39,7 @@ function App() {
   // Data hook
   const {
     members,
+    relationships,
     loading,
     error,
     addMember,
@@ -90,6 +91,15 @@ function App() {
   // Handlers
   const handleAddMember = useCallback(async (data: CreateMemberInput) => {
     await addMember(data)
+  }, [addMember])
+
+  /** Create a new member and return their ID (used by AddRelationshipModal) */
+  const handleCreateMemberForRelationship = useCallback(async (data: { name: string; dateOfBirth?: string }): Promise<string> => {
+    const newMember = await addMember({
+      name: data.name,
+      dateOfBirth: data.dateOfBirth,
+    })
+    return newMember.id
   }, [addMember])
 
   const handleUpdateMember = useCallback(async (id: string, data: UpdateMemberInput) => {
@@ -237,7 +247,12 @@ function App() {
         }
       >
         {/* 3D Scene */}
-        <TreeScene members={members} onMemberSelect={handleMemberSelect} />
+        <TreeScene
+          members={members}
+          relationships={relationships}
+          selectedMemberId={selectedMember?.id}
+          onMemberSelect={handleMemberSelect}
+        />
 
         {/* Empty state */}
         {members.length === 0 && <EmptyState />}
@@ -266,6 +281,7 @@ function App() {
         isOpen={isAddRelationshipModalOpen}
         onClose={handleCloseAddRelationshipModal}
         onSubmit={handleAddRelationship}
+        onCreateMember={handleCreateMemberForRelationship}
         members={members}
         preSelectedMemberId={selectedMember?.id}
         preSelectedType={preSelectedRelationshipType}

@@ -129,19 +129,24 @@ describe('AddRelationshipModal', () => {
       expect(options.some((opt) => opt.textContent?.includes('Tommy Smith'))).toBe(true)
     })
 
-    it('shows warning when fewer than 2 members', () => {
+    it('shows create new member option when onCreateMember is provided', () => {
+      const mockOnCreateMember = vi.fn()
       render(
         <AddRelationshipModal
           isOpen={true}
           onClose={mockOnClose}
           onSubmit={mockOnSubmit}
           members={[mockMembers[0]]}
+          onCreateMember={mockOnCreateMember}
         />
       )
 
-      expect(
-        screen.getByText(/You need at least 2 family members to create a relationship/)
-      ).toBeInTheDocument()
+      // With onCreateMember prop, user should be able to select "Create new family member"
+      const person2Select = screen.getByLabelText(/Second Person/)
+      expect(person2Select).toBeInTheDocument()
+
+      // The dropdown should have the "Create new family member" option
+      expect(screen.getByText(/Create new family member/)).toBeInTheDocument()
     })
   })
 
