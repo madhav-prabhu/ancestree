@@ -14,7 +14,10 @@ const ALLOWED_CHANNELS = [
   'autosave:has',
   'autosave:update',
   'document:setDirty',
-  'document:getDirty'
+  'document:getDirty',
+  // Update channels
+  'update:check',
+  'update:download'
 ] as const
 
 /**
@@ -26,7 +29,13 @@ const ALLOWED_RECEIVE_CHANNELS = [
   'menu:open',
   'menu:save',
   'menu:saveAs',
-  'menu:export'
+  'menu:export',
+  // Update events
+  'update:available',
+  'update:notAvailable',
+  'update:progress',
+  'update:downloaded',
+  'update:error'
 ] as const
 
 /**
@@ -84,6 +93,42 @@ const electronAPI = {
     }
 
     // Return unsubscribe function
+    return (): void => {
+      for (const { channel, handler } of listeners) {
+        ipcRenderer.removeListener(channel, handler)
+      }
+    }
+  },
+
+  /**
+   * Subscribe to update events from the main process
+   *
+   * @param callback - Function called with event type and data
+   * @returns Unsubscribe function to remove all listeners
+   */
+  onUpdateEvent: (callback: (event: string, data?: unknown) => void): (() => void) => {
+    const updateChannels = [
+      'update:available',
+      'update:notAvailable',
+      'update:progress',
+      'update:downloaded',
+      'update:error'
+    ] as const
+
+    const listeners: Array<{
+      channel: string
+      handler: (_event: IpcRendererEvent, data?: unknown) => void
+    }> = []
+
+    for (const channel of updateChannels) {
+      const handler = (_event: IpcRendererEvent, data?: unknown): void => {
+        const eventType = channel.replace('update:', '')
+        callback(eventType, data)
+      }
+      ipcRenderer.on(channel, handler)
+      listeners.push({ channel, handler })
+    }
+
     return (): void => {
       for (const { channel, handler } of listeners) {
         ipcRenderer.removeListener(channel, handler)
