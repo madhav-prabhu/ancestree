@@ -4,6 +4,7 @@ import { registerFileHandlers } from './ipc/fileHandlers'
 import { createApplicationMenu } from './menu'
 import { registerAutoSaveHandlers, startAutoSave, stopAutoSave } from './services/autoSave'
 import { loadWindowState, trackWindowState, getMinimumDimensions } from './services/windowState'
+import { createTray, destroyTray, setCurrentFilename, updateTrayMenu } from './tray'
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null
@@ -87,6 +88,7 @@ function createWindow(): void {
       cleanupWindowState()
       cleanupWindowState = null
     }
+    destroyTray()
     mainWindow = null
   })
 
@@ -161,6 +163,10 @@ function setupDirtyStateHandling(): void {
       // Windows/Linux show asterisk in title
       const indicator = process.platform === 'darwin' ? '' : (dirty ? ' *' : '')
       mainWindow.setTitle(`${baseName}${indicator} - Ancestree`)
+
+      // Update tray menu with current filename
+      setCurrentFilename(filePath ? path.basename(filePath) : null)
+      updateTrayMenu(mainWindow)
     }
 
     return true
@@ -221,6 +227,11 @@ app.whenReady().then(() => {
     createApplicationMenu(mainWindow)
   }
 
+  // Create system tray
+  if (mainWindow) {
+    createTray(mainWindow)
+  }
+
   // macOS: Re-create window when dock icon clicked and no windows exist
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -236,7 +247,8 @@ app.on('window-all-closed', () => {
   }
 })
 
-// Clean up auto-save timer before quitting
+// Clean up auto-save timer and tray before quitting
 app.on('before-quit', () => {
   stopAutoSave()
+  destroyTray()
 })
