@@ -3,9 +3,13 @@ import path from 'path'
 import { registerFileHandlers } from './ipc/fileHandlers'
 import { createApplicationMenu } from './menu'
 import { registerAutoSaveHandlers, startAutoSave, stopAutoSave } from './services/autoSave'
+import { loadWindowState, trackWindowState, getMinimumDimensions } from './services/windowState'
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null
+
+// Window state tracking cleanup function
+let cleanupWindowState: (() => void) | null = null
 
 // Module-level state for dirty tracking
 let isDirty = false
@@ -36,9 +40,17 @@ if (!gotTheLock) {
  * Create the main browser window with secure settings
  */
 function createWindow(): void {
+  // Load persisted window bounds or calculate defaults
+  const bounds = loadWindowState()
+  const { minWidth, minHeight } = getMinimumDimensions()
+
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    x: bounds.x,
+    y: bounds.y,
+    width: bounds.width,
+    height: bounds.height,
+    minWidth,
+    minHeight,
     show: false, // Show when ready to prevent visual flash
     webPreferences: {
       // Preload script path (relative to compiled main process)
@@ -61,6 +73,9 @@ function createWindow(): void {
     }
   })
 
+  // Start tracking window state changes
+  cleanupWindowState = trackWindowState(mainWindow)
+
   // Show window when ready to prevent visual flash
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
@@ -68,6 +83,10 @@ function createWindow(): void {
 
   // Handle window closed
   mainWindow.on('closed', () => {
+    if (cleanupWindowState) {
+      cleanupWindowState()
+      cleanupWindowState = null
+    }
     mainWindow = null
   })
 
