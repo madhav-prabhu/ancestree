@@ -1,5 +1,8 @@
 import { BrowserWindow, app, screen } from 'electron'
-import Store from 'electron-store'
+import ElectronStore from 'electron-store'
+
+// Handle ESM default export in CJS context
+const Store = ((ElectronStore as unknown) as { default?: typeof ElectronStore }).default ?? ElectronStore
 
 interface WindowBounds {
   x: number
@@ -21,6 +24,7 @@ const SAVE_DEBOUNCE_MS = 500
 // Store instance
 const windowStateStore = new Store<WindowStateSchema>({
   name: 'ancestree-window-state',
+  projectName: 'ancestree',
   defaults: { bounds: null }
 })
 

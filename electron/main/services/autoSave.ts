@@ -1,5 +1,8 @@
-import Store from 'electron-store'
+import ElectronStore from 'electron-store'
 import { ipcMain } from 'electron'
+
+// Handle ESM default export in CJS context
+const Store = ((ElectronStore as unknown) as { default?: typeof ElectronStore }).default ?? ElectronStore
 
 interface AutoSaveData {
   filePath: string | null
@@ -13,6 +16,7 @@ interface StoreSchema {
 
 const draftStore = new Store<StoreSchema>({
   name: 'ancestree-draft',
+  projectName: 'ancestree',
   defaults: { draft: null }
 })
 
