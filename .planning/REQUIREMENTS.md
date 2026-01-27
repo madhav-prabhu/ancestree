@@ -99,9 +99,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CORE-04 | Phase 1 | Pending |
 | CORE-05 | Phase 1 | Pending |
 | CORE-06 | Phase 1 | Pending |
+| SYS-05 | Phase 1 | Pending |
+| FILE-03 | Phase 1 | Pending |
 | FILE-01 | Phase 2 | Pending |
 | FILE-02 | Phase 2 | Pending |
-| FILE-03 | Phase 2 | Pending |
 | MENU-01 | Phase 2 | Pending |
 | MENU-02 | Phase 2 | Pending |
 | MENU-03 | Phase 2 | Pending |
@@ -119,13 +120,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SYS-02 | Phase 5 | Pending |
 | SYS-03 | Phase 5 | Pending |
 | SYS-04 | Phase 5 | Pending |
-| SYS-05 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 27 total
 - Mapped to phases: 27
-- Unmapped: 0 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-26 after initial definition*
+*Last updated: 2026-01-26 after roadmap creation*
