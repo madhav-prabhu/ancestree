@@ -63,10 +63,10 @@ Plans:
   1. User restarts app and window appears at the same size and position as before
   2. Window has platform-native title bar (not custom frameless)
   3. Minimize, maximize, and close buttons work as expected on each platform
-**Plans**: TBD
+**Plans**: 1 plan in 1 wave
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 03-01-PLAN.md — Window state persistence service and main process integration
 
 ### Phase 4: Packaging & Branding
 **Goal**: Users can download and install Ancestree on any platform with professional branding and signed installers
