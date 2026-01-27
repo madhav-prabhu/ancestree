@@ -17,6 +17,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Window Management** - Persistent window state and platform-native window behavior
 - [x] **Phase 4: Packaging & Branding** - Signed installers for macOS, Windows, and Linux
 - [x] **Phase 5: System Integration** - System tray, context menu, and auto-updates
+- [ ] **Phase 6: Update UI Completion** - In-app update notifications with type-safe IPC wiring (GAP CLOSURE)
+- [ ] **Phase 7: File Operations Polish** - Dirty check on New file and save-then-close coordination (GAP CLOSURE)
 
 ## Phase Details
 
@@ -99,10 +101,39 @@ Plans:
 - [x] 05-02-PLAN.md — Auto-updater with electron-updater and GitHub Releases
 - [x] 05-03-PLAN.md — IPC wiring and main process integration
 
+### Phase 6: Update UI Completion
+**Goal**: Users see in-app update notifications with download progress instead of relying solely on OS notifications
+**Depends on**: Phase 5
+**Requirements**: None (enhancement — closes tech debt from audit)
+**Gap Closure**: Addresses missing `onUpdateEvent` type definition and in-app update UI
+**Success Criteria** (what must be TRUE):
+  1. `onUpdateEvent` method is properly typed in `ElectronAPI` interface
+  2. Renderer can subscribe to update events without TypeScript errors
+  3. In-app notification appears when update is available
+  4. User can trigger download from in-app UI
+**Plans**: 1 plan in 1 wave
+
+Plans:
+- [ ] 06-01-PLAN.md — Update type definitions and create UpdateNotification component
+
+### Phase 7: File Operations Polish
+**Goal**: File operations handle all edge cases gracefully with proper user confirmations
+**Depends on**: Phase 6
+**Requirements**: None (enhancement — closes tech debt from audit)
+**Gap Closure**: Addresses TODO for dirty check on New and save-then-close coordination
+**Success Criteria** (what must be TRUE):
+  1. "New" menu action prompts to save if document is dirty
+  2. Save-then-close flow completes automatically without manual coordination
+  3. No data loss scenarios in file operation edge cases
+**Plans**: 1 plan in 1 wave
+
+Plans:
+- [ ] 07-01-PLAN.md — Dirty check dialog for New and improved close confirmation flow
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -111,8 +142,10 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 3. Window Management | 1/1 | Complete | 2026-01-27 |
 | 4. Packaging & Branding | 2/2 | Complete | 2026-01-27 |
 | 5. System Integration | 3/3 | Complete | 2026-01-27 |
+| 6. Update UI Completion | 0/1 | Not Started | — |
+| 7. File Operations Polish | 0/1 | Not Started | — |
 
 ---
 *Roadmap created: 2026-01-26*
 *Last updated: 2026-01-27*
-*Milestone complete: 2026-01-27*
+*Gap closure phases added: 2026-01-27*
