@@ -15,6 +15,8 @@ const ALLOWED_CHANNELS = [
   'autosave:update',
   'document:setDirty',
   'document:getDirty',
+  // Save completion notification
+  'save:completed',
   // Update channels
   'update:check',
   'update:download'
@@ -30,6 +32,8 @@ const ALLOWED_RECEIVE_CHANNELS = [
   'menu:save',
   'menu:saveAs',
   'menu:export',
+  // File operation events
+  'file:proceedWithNew',
   // Update events
   'update:available',
   'update:notAvailable',
@@ -76,16 +80,21 @@ const electronAPI = {
    * @returns Unsubscribe function to remove all listeners
    */
   onMenuAction: (callback: (action: string) => void): (() => void) => {
+    // Filter to menu and file channels only (update channels handled by onUpdateEvent)
+    const menuChannels = ALLOWED_RECEIVE_CHANNELS.filter(
+      (ch) => ch.startsWith('menu:') || ch.startsWith('file:')
+    )
+
     // Create listeners for each allowed receive channel
     const listeners: Array<{
       channel: (typeof ALLOWED_RECEIVE_CHANNELS)[number]
       handler: (_event: IpcRendererEvent) => void
     }> = []
 
-    for (const channel of ALLOWED_RECEIVE_CHANNELS) {
+    for (const channel of menuChannels) {
       const handler = (_event: IpcRendererEvent): void => {
-        // Extract action name from channel (e.g., 'menu:save' -> 'save')
-        const action = channel.replace('menu:', '')
+        // Extract action name from channel (e.g., 'menu:save' -> 'save', 'file:proceedWithNew' -> 'proceedWithNew')
+        const action = channel.split(':')[1]
         callback(action)
       }
       ipcRenderer.on(channel, handler)

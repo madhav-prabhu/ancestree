@@ -49,7 +49,7 @@ export interface ElectronAPI {
   /**
    * Subscribe to menu action events from the main process
    *
-   * @param callback - Function called with action name ('new', 'open', 'save', 'saveAs', 'export')
+   * @param callback - Function called with action name ('new', 'open', 'save', 'saveAs', 'export', 'proceedWithNew')
    * @returns Unsubscribe function to remove all listeners
    */
   onMenuAction: (callback: (action: string) => void) => () => void
