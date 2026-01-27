@@ -53,6 +53,15 @@ export interface ElectronAPI {
    * @returns Unsubscribe function to remove all listeners
    */
   onMenuAction: (callback: (action: string) => void) => () => void
+
+  /**
+   * Subscribe to update events from the main process
+   * Events include: 'available', 'notAvailable', 'progress', 'downloaded', 'error'
+   *
+   * @param callback - Function called with event type and optional data
+   * @returns Unsubscribe function to remove all listeners
+   */
+  onUpdateEvent: (callback: (event: string, data?: unknown) => void) => () => void
 }
 
 /**

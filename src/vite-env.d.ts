@@ -16,6 +16,8 @@ interface ElectronAPI {
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
   /** Subscribe to menu action events from main process */
   onMenuAction: (callback: (action: string) => void) => () => void
+  /** Subscribe to update events from main process (available, notAvailable, progress, downloaded, error) */
+  onUpdateEvent: (callback: (event: string, data?: unknown) => void) => () => void
 }
 
 declare global {
