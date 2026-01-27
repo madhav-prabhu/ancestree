@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Window Management** - Persistent window state and platform-native window behavior
 - [x] **Phase 4: Packaging & Branding** - Signed installers for macOS, Windows, and Linux
 - [x] **Phase 5: System Integration** - System tray, context menu, and auto-updates
-- [ ] **Phase 6: Update UI Completion** - In-app update notifications with type-safe IPC wiring (GAP CLOSURE)
+- [x] **Phase 6: Update UI Completion** - In-app update notifications with type-safe IPC wiring (GAP CLOSURE)
 - [ ] **Phase 7: File Operations Polish** - Dirty check on New file and save-then-close coordination (GAP CLOSURE)
 
 ## Phase Details
@@ -114,7 +114,7 @@ Plans:
 **Plans**: 1 plan in 1 wave
 
 Plans:
-- [ ] 06-01-PLAN.md — Update type definitions and create UpdateNotification component
+- [x] 06-01-PLAN.md — Update type definitions and create UpdateNotification component
 
 ### Phase 7: File Operations Polish
 **Goal**: File operations handle all edge cases gracefully with proper user confirmations
@@ -142,7 +142,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 3. Window Management | 1/1 | Complete | 2026-01-27 |
 | 4. Packaging & Branding | 2/2 | Complete | 2026-01-27 |
 | 5. System Integration | 3/3 | Complete | 2026-01-27 |
-| 6. Update UI Completion | 0/1 | Not Started | — |
+| 6. Update UI Completion | 1/1 | Complete | 2026-01-27 |
 | 7. File Operations Polish | 0/1 | Not Started | — |
 
 ---
