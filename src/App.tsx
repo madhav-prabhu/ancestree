@@ -151,6 +151,12 @@ function App() {
     }
   }, [members, relationships, fileOps])
 
+  // Sync dirty state to main process for window title and close confirmation
+  useEffect(() => {
+    if (!isElectron()) return
+    window.electronAPI!.invoke('document:setDirty', fileOps.isDirty, fileOps.filePath)
+  }, [fileOps.isDirty, fileOps.filePath])
+
   // Check for draft on mount (crash recovery)
   useEffect(() => {
     if (!isElectron()) return
