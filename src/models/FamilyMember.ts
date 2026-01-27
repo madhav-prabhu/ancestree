@@ -8,6 +8,7 @@ export interface FamilyMember {
   placeOfBirth?: string
   dateOfDeath?: string      // ISO date string, undefined if alive
   notes?: string
+  photo?: string            // Base64 data URL for profile photo
 
   // Metadata
   createdAt: string

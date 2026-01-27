@@ -12,6 +12,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { FamilyMember } from '../models/FamilyMember'
 import type { Relationship, RelationshipType } from '../models/Relationship'
+import { getInitials } from '../utils/imageUtils'
+import { formatDate, formatDateTime } from '../utils/dateUtils'
 
 /**
  * Quick action type for adding specific relationship types.
@@ -38,22 +40,6 @@ interface MemberDetailPanelProps {
   onQuickAddRelationship?: (action: QuickRelationshipAction) => void
 }
 
-/**
- * Format a date string for display.
- */
-function formatDate(dateString: string | undefined): string {
-  if (!dateString) return 'Unknown'
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  } catch {
-    return dateString
-  }
-}
 
 /**
  * Calculate age from date of birth (and optionally date of death).
@@ -255,10 +241,29 @@ export function MemberDetailPanel({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        {/* Profile photo */}
+        <div className="flex justify-center">
+          <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-4 border-emerald-100 shadow-md">
+            {member.photo ? (
+              <img
+                src={member.photo}
+                alt={member.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-3xl font-bold text-gray-400">
+                {getInitials(member.name)}
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* Status badge */}
         {isDeceased && (
-          <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-600">
-            Deceased
+          <div className="flex justify-center">
+            <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-600">
+              Deceased
+            </div>
           </div>
         )}
 
@@ -304,14 +309,18 @@ export function MemberDetailPanel({
         </section>
 
         {/* Notes */}
-        {member.notes && (
-          <section>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-              Notes
-            </h3>
-            <p className="text-base text-gray-700 whitespace-pre-wrap">{member.notes}</p>
-          </section>
-        )}
+        <section>
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            Notes
+          </h3>
+          {member.notes ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <p className="text-base text-gray-700 whitespace-pre-wrap">{member.notes}</p>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 italic">No notes added yet. Click "Edit" to add notes about this person.</p>
+          )}
+        </section>
 
         {/* Relationships */}
         <section>
@@ -480,11 +489,11 @@ export function MemberDetailPanel({
           <dl className="space-y-2 text-xs text-gray-500">
             <div>
               <dt className="inline">Created: </dt>
-              <dd className="inline">{new Date(member.createdAt).toLocaleString()}</dd>
+              <dd className="inline">{formatDateTime(member.createdAt)}</dd>
             </div>
             <div>
               <dt className="inline">Updated: </dt>
-              <dd className="inline">{new Date(member.updatedAt).toLocaleString()}</dd>
+              <dd className="inline">{formatDateTime(member.updatedAt)}</dd>
             </div>
           </dl>
         </section>
@@ -573,7 +582,7 @@ function RelationshipGroup({
               )}
               {showMarriageDate && rm.marriageDate && (
                 <span className="text-xs text-gray-500 ml-2">
-                  (married {rm.marriageDate})
+                  (married {formatDate(rm.marriageDate)})
                 </span>
               )}
             </div>

@@ -363,7 +363,7 @@ describe('AddRelationshipModal', () => {
       await user.selectOptions(screen.getByLabelText(/Second Person/), 'member-2')
 
       const marriageDateInput = screen.getByLabelText(/Marriage Date/)
-      fireEvent.change(marriageDateInput, { target: { value: '2099-01-01' } })
+      fireEvent.change(marriageDateInput, { target: { value: '01/01/2099' } })
 
       await user.click(getSubmitButton())
 
@@ -422,7 +422,7 @@ describe('AddRelationshipModal', () => {
       await user.selectOptions(screen.getByLabelText(/Second Person/), 'member-2')
 
       const marriageDateInput = screen.getByLabelText(/Marriage Date/)
-      fireEvent.change(marriageDateInput, { target: { value: '1985-06-15' } })
+      fireEvent.change(marriageDateInput, { target: { value: '15/06/1985' } })
 
       await user.click(getSubmitButton())
 
@@ -580,10 +580,10 @@ describe('AddRelationshipModal', () => {
       await user.selectOptions(screen.getByLabelText(/Second Person/), 'member-2')
 
       const marriageDateInput = screen.getByLabelText(/Marriage Date/)
-      fireEvent.change(marriageDateInput, { target: { value: '1985-06-15' } })
+      fireEvent.change(marriageDateInput, { target: { value: '15/06/1985' } })
 
       expect(
-        screen.getByText(/John Smith and Jane Smith are spouses \(married 1985-06-15\)/)
+        screen.getByText(/John Smith and Jane Smith are spouses \(married 15\/06\/1985\)/)
       ).toBeInTheDocument()
     })
 

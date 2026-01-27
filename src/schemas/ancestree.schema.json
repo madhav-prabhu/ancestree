@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ancestree.app/schemas/export/v1",
+  "title": "Ancestree Export Format",
+  "description": "JSON Schema for Ancestree family tree data import/export",
+  "type": "object",
+  "required": ["version", "exportedAt", "members", "relationships"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version for forward compatibility (semver format)",
+      "examples": ["1.0.0"]
+    },
+    "exportedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the export was created",
+      "examples": ["2024-01-15T10:30:00.000Z"]
+    },
+    "members": {
+      "type": "array",
+      "description": "Array of all family members in the tree",
+      "items": {
+        "$ref": "#/$defs/FamilyMember"
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Array of all relationships between family members",
+      "items": {
+        "$ref": "#/$defs/Relationship"
+      }
+    }
+  },
+  "$defs": {
+    "FamilyMember": {
+      "type": "object",
+      "description": "Represents a single family member in the tree",
+      "required": ["id", "name", "createdAt", "updatedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique identifier for the family member (UUID recommended)",
+          "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Full name of the family member",
+          "examples": ["John Smith"]
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Date of birth in ISO 8601 format (YYYY-MM-DD)",
+          "examples": ["1950-03-15"]
+        },
+        "placeOfBirth": {
+          "type": "string",
+          "description": "Place of birth (city, country, etc.)",
+          "examples": ["New York, USA"]
+        },
+        "dateOfDeath": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Date of death in ISO 8601 format (YYYY-MM-DD). Omit if person is still alive.",
+          "examples": ["2020-12-01"]
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the family member",
+          "examples": ["Served in WWII. Loved gardening."]
+        },
+        "photo": {
+          "type": "string",
+          "pattern": "^data:image\\/[a-zA-Z+]+;base64,[A-Za-z0-9+/]+=*$",
+          "description": "Profile photo as a base64 data URL",
+          "examples": ["data:image/png;base64,iVBORw0KGgo..."]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the record was created",
+          "examples": ["2024-01-15T10:30:00.000Z"]
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the record was last updated",
+          "examples": ["2024-01-15T10:30:00.000Z"]
+        }
+      }
+    },
+    "Relationship": {
+      "type": "object",
+      "description": "Represents a relationship between two family members",
+      "required": ["id", "type", "person1Id", "person2Id", "createdAt", "updatedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique identifier for the relationship (UUID recommended)",
+          "examples": ["660e8400-e29b-41d4-a716-446655440001"]
+        },
+        "type": {
+          "type": "string",
+          "enum": ["parent-child", "spouse", "sibling"],
+          "description": "Type of relationship. For parent-child: person1 is parent, person2 is child. For spouse/sibling: order doesn't matter."
+        },
+        "person1Id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the first person in the relationship (parent for parent-child)"
+        },
+        "person2Id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the second person in the relationship (child for parent-child)"
+        },
+        "marriageDate": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Marriage date for spouse relationships (YYYY-MM-DD)",
+          "examples": ["1975-06-20"]
+        },
+        "divorceDate": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Divorce date for spouse relationships (YYYY-MM-DD)",
+          "examples": ["1985-03-10"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the record was created",
+          "examples": ["2024-01-15T10:30:00.000Z"]
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the record was last updated",
+          "examples": ["2024-01-15T10:30:00.000Z"]
+        }
+      }
+    }
+  }
+}

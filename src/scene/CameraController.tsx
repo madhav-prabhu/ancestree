@@ -32,6 +32,10 @@ interface CameraControllerProps {
   controlsRef?: React.RefObject<OrbitControlsImpl | null>
   /** Whether keyboard navigation is enabled */
   enableKeyboardNav?: boolean
+  /** Callback when camera target changes (for minimap sync) */
+  onTargetChange?: (target: { x: number; y: number; z: number }) => void
+  /** External navigation request (from minimap) */
+  navigateToPosition?: { x: number; y: number; z: number } | null
 }
 
 /**
@@ -58,6 +62,8 @@ export function CameraController({
   onNavigate,
   controlsRef,
   enableKeyboardNav = true,
+  onTargetChange,
+  navigateToPosition,
 }: CameraControllerProps) {
   const { camera } = useThree()
   const animationRef = useRef<AnimationState>({
@@ -259,36 +265,74 @@ export function CameraController({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [enableKeyboardNav, navigateToMember, focusOnSelected, fitAll])
 
+  // Track previous target position to avoid redundant callbacks
+  const prevTargetRef = useRef({ x: 0, y: 0, z: 0 })
+
   /**
-   * Animate camera position and target
+   * Single useFrame hook to handle both animation and target change tracking.
+   * Consolidates camera animation and user interaction tracking.
    */
   useFrame((_, delta) => {
+    if (!controlsRef?.current) return
+
     const anim = animationRef.current
-    if (!anim.active || !controlsRef?.current) return
+    const controls = controlsRef.current
 
-    // Update progress
-    anim.progress += delta / anim.duration
+    // Handle animation if active
+    if (anim.active) {
+      // Update progress
+      anim.progress += delta / anim.duration
 
-    if (anim.progress >= 1) {
-      // Animation complete
-      anim.progress = 1
-      anim.active = false
+      if (anim.progress >= 1) {
+        // Animation complete
+        anim.progress = 1
+        anim.active = false
+      }
+
+      // Easing function (ease out cubic)
+      const t = 1 - Math.pow(1 - anim.progress, 3)
+
+      // Interpolate camera position
+      camera.position.lerpVectors(anim.startPosition, anim.targetPosition, t)
+
+      // Interpolate controls target
+      controls.target.lerpVectors(anim.startTarget, anim.targetTarget, t)
+      controls.update()
     }
 
-    // Easing function (ease out cubic)
-    const t = 1 - Math.pow(1 - anim.progress, 3)
+    // Report target change only when values actually change
+    if (onTargetChange) {
+      const currentTarget = controls.target
+      const prevTarget = prevTargetRef.current
 
-    // Interpolate camera position
-    camera.position.lerpVectors(anim.startPosition, anim.targetPosition, t)
+      // Check if target has changed (with small epsilon for floating point comparison)
+      const epsilon = 0.0001
+      const hasChanged =
+        Math.abs(currentTarget.x - prevTarget.x) > epsilon ||
+        Math.abs(currentTarget.y - prevTarget.y) > epsilon ||
+        Math.abs(currentTarget.z - prevTarget.z) > epsilon
 
-    // Interpolate controls target
-    controlsRef.current.target.lerpVectors(
-      anim.startTarget,
-      anim.targetTarget,
-      t
-    )
-    controlsRef.current.update()
+      if (hasChanged) {
+        prevTargetRef.current = {
+          x: currentTarget.x,
+          y: currentTarget.y,
+          z: currentTarget.z,
+        }
+        onTargetChange({
+          x: currentTarget.x,
+          y: currentTarget.y,
+          z: currentTarget.z,
+        })
+      }
+    }
   })
+
+  // Handle external navigation request (from minimap)
+  useEffect(() => {
+    if (navigateToPosition) {
+      focusOnPosition(navigateToPosition)
+    }
+  }, [navigateToPosition, focusOnPosition])
 
   // Auto-focus on selected member when it changes
   useEffect(() => {

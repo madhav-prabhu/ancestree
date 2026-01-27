@@ -7,9 +7,11 @@
  * - Closes on success, escape key, or clicking outside
  */
 
-import { useState, useEffect, useRef, useCallback, type FormEvent } from 'react'
+import { useState, useEffect, useRef, useCallback, type FormEvent, type ChangeEvent } from 'react'
 import type { FamilyMember } from '../models/FamilyMember'
 import type { UpdateMemberInput } from '../services/familyService'
+import { processImage, getInitials } from '../utils/imageUtils'
+import { isoToDisplay, displayToIso, isValidDisplayDate } from '../utils/dateUtils'
 
 interface EditMemberModalProps {
   isOpen: boolean
@@ -22,6 +24,7 @@ interface FormErrors {
   name?: string
   dateOfBirth?: string
   dateOfDeath?: string
+  photo?: string
   general?: string
 }
 
@@ -32,30 +35,67 @@ export function EditMemberModal({ isOpen, member, onClose, onSubmit }: EditMembe
   const [placeOfBirth, setPlaceOfBirth] = useState('')
   const [dateOfDeath, setDateOfDeath] = useState('')
   const [notes, setNotes] = useState('')
+  const [photo, setPhoto] = useState<string | undefined>(undefined)
 
   // UI state
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isProcessingPhoto, setIsProcessingPhoto] = useState(false)
 
   // Refs
   const modalRef = useRef<HTMLDivElement>(null)
   const nameInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Populate form when modal opens or member changes
   useEffect(() => {
     if (isOpen && member) {
       setName(member.name)
-      setDateOfBirth(member.dateOfBirth || '')
+      setDateOfBirth(isoToDisplay(member.dateOfBirth))
       setPlaceOfBirth(member.placeOfBirth || '')
-      setDateOfDeath(member.dateOfDeath || '')
+      setDateOfDeath(isoToDisplay(member.dateOfDeath))
       setNotes(member.notes || '')
+      setPhoto(member.photo)
       setErrors({})
       setIsSubmitting(false)
+      setIsProcessingPhoto(false)
 
       // Focus name input when modal opens
       setTimeout(() => nameInputRef.current?.focus(), 50)
     }
   }, [isOpen, member])
+
+  // Handle photo upload
+  const handlePhotoChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsProcessingPhoto(true)
+    setErrors((prev) => ({ ...prev, photo: undefined }))
+
+    try {
+      const processed = await processImage(file)
+      setPhoto(processed)
+    } catch (err) {
+      setErrors((prev) => ({
+        ...prev,
+        photo: err instanceof Error ? err.message : 'Failed to process image',
+      }))
+    } finally {
+      setIsProcessingPhoto(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }, [])
+
+  // Remove photo
+  const handleRemovePhoto = useCallback(() => {
+    setPhoto(undefined)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }, [])
 
   // Handle escape key
   useEffect(() => {
@@ -88,27 +128,34 @@ export function EditMemberModal({ isOpen, member, onClose, onSubmit }: EditMembe
       newErrors.name = 'Name is required'
     }
 
-    // Date of birth validation
+    // Date of birth validation (format: dd/mm/yyyy)
     if (dateOfBirth) {
-      const dob = new Date(dateOfBirth)
-      if (isNaN(dob.getTime())) {
-        newErrors.dateOfBirth = 'Invalid date format'
-      } else if (dob > new Date()) {
-        newErrors.dateOfBirth = 'Date of birth cannot be in the future'
+      if (!isValidDisplayDate(dateOfBirth)) {
+        newErrors.dateOfBirth = 'Invalid date format (use dd/mm/yyyy)'
+      } else {
+        const isoDate = displayToIso(dateOfBirth)
+        const dob = new Date(isoDate)
+        if (dob > new Date()) {
+          newErrors.dateOfBirth = 'Date of birth cannot be in the future'
+        }
       }
     }
 
-    // Date of death validation
+    // Date of death validation (format: dd/mm/yyyy)
     if (dateOfDeath) {
-      const dod = new Date(dateOfDeath)
-      if (isNaN(dod.getTime())) {
-        newErrors.dateOfDeath = 'Invalid date format'
-      } else if (dod > new Date()) {
-        newErrors.dateOfDeath = 'Date of death cannot be in the future'
-      } else if (dateOfBirth) {
-        const dob = new Date(dateOfBirth)
-        if (dod < dob) {
-          newErrors.dateOfDeath = 'Date of death cannot be before date of birth'
+      if (!isValidDisplayDate(dateOfDeath)) {
+        newErrors.dateOfDeath = 'Invalid date format (use dd/mm/yyyy)'
+      } else {
+        const isoDate = displayToIso(dateOfDeath)
+        const dod = new Date(isoDate)
+        if (dod > new Date()) {
+          newErrors.dateOfDeath = 'Date of death cannot be in the future'
+        } else if (dateOfBirth && isValidDisplayDate(dateOfBirth)) {
+          const dobIso = displayToIso(dateOfBirth)
+          const dob = new Date(dobIso)
+          if (dod < dob) {
+            newErrors.dateOfDeath = 'Date of death cannot be before date of birth'
+          }
         }
       }
     }
@@ -131,10 +178,11 @@ export function EditMemberModal({ isOpen, member, onClose, onSubmit }: EditMembe
     try {
       const data: UpdateMemberInput = {
         name: name.trim(),
-        dateOfBirth: dateOfBirth || undefined,
+        dateOfBirth: dateOfBirth ? displayToIso(dateOfBirth) : undefined,
         placeOfBirth: placeOfBirth.trim() || undefined,
-        dateOfDeath: dateOfDeath || undefined,
+        dateOfDeath: dateOfDeath ? displayToIso(dateOfDeath) : undefined,
         notes: notes.trim() || undefined,
+        photo: photo || undefined,
       }
 
       await onSubmit(member.id, data)
@@ -202,6 +250,63 @@ export function EditMemberModal({ isOpen, member, onClose, onSubmit }: EditMembe
             </div>
           )}
 
+          {/* Photo upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Photo
+            </label>
+            <div className="flex items-center gap-4">
+              {/* Photo preview or placeholder */}
+              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
+                {photo ? (
+                  <img
+                    src={photo}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl font-bold text-gray-400">
+                    {name ? getInitials(name) : '?'}
+                  </span>
+                )}
+              </div>
+
+              {/* Upload/Remove buttons */}
+              <div className="flex flex-col gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  disabled={isSubmitting || isProcessingPhoto}
+                  className="hidden"
+                  id="edit-photo-upload"
+                />
+                <label
+                  htmlFor="edit-photo-upload"
+                  className={`px-3 py-1.5 text-sm rounded-lg cursor-pointer transition-colors ${
+                    isProcessingPhoto
+                      ? 'bg-gray-100 text-gray-400'
+                      : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                  }`}
+                >
+                  {isProcessingPhoto ? 'Processing...' : photo ? 'Change Photo' : 'Upload Photo'}
+                </label>
+                {photo && (
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    disabled={isSubmitting}
+                    className="px-3 py-1.5 text-sm text-red-600 hover:text-red-700 transition-colors"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+            {errors.photo && <p className="mt-1 text-sm text-red-600">{errors.photo}</p>}
+          </div>
+
           {/* Name field (required) */}
           <div>
             <label htmlFor="edit-name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -231,11 +336,12 @@ export function EditMemberModal({ isOpen, member, onClose, onSubmit }: EditMembe
               Date of Birth
             </label>
             <input
-              type="date"
+              type="text"
               id="edit-dateOfBirth"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
               disabled={isSubmitting}
+              placeholder="dd/mm/yyyy"
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 ${
                 errors.dateOfBirth ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -273,11 +379,12 @@ export function EditMemberModal({ isOpen, member, onClose, onSubmit }: EditMembe
               Date of Death
             </label>
             <input
-              type="date"
+              type="text"
               id="edit-dateOfDeath"
               value={dateOfDeath}
               onChange={(e) => setDateOfDeath(e.target.value)}
               disabled={isSubmitting}
+              placeholder="dd/mm/yyyy"
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 ${
                 errors.dateOfDeath ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -297,10 +404,17 @@ export function EditMemberModal({ isOpen, member, onClose, onSubmit }: EditMembe
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               disabled={isSubmitting}
-              rows={3}
+              rows={6}
+              maxLength={2000}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 resize-none"
-              placeholder="Additional notes about this person..."
+              placeholder="Add biographical information, stories, memories, or any other notes about this person..."
             />
+            <div className="flex justify-between mt-1">
+              <p className="text-xs text-gray-500">Personal stories, memories, achievements, etc.</p>
+              <span className={`text-xs ${notes.length > 1800 ? 'text-amber-600' : 'text-gray-400'}`}>
+                {notes.length}/2000
+              </span>
+            </div>
           </div>
 
           {/* Actions */}

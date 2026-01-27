@@ -23,6 +23,10 @@ interface TreeSceneProps {
   relationships: Relationship[]
   selectedMemberId?: string
   onMemberSelect: (member: FamilyMember) => void
+  /** Callback when camera target changes (for minimap sync) */
+  onCameraTargetChange?: (target: { x: number; y: number; z: number }) => void
+  /** External navigation request (from minimap) */
+  navigateToPosition?: { x: number; y: number; z: number } | null
 }
 
 /**
@@ -38,6 +42,8 @@ const SceneContent = memo(function SceneContent({
   selectedMemberId,
   onMemberSelect,
   controlsRef,
+  onCameraTargetChange,
+  navigateToPosition,
 }: {
   members: FamilyMember[]
   relationships: Relationship[]
@@ -51,6 +57,8 @@ const SceneContent = memo(function SceneContent({
   selectedMemberId?: string
   onMemberSelect: (member: FamilyMember) => void
   controlsRef: React.RefObject<OrbitControlsImpl | null>
+  onCameraTargetChange?: (target: { x: number; y: number; z: number }) => void
+  navigateToPosition?: { x: number; y: number; z: number } | null
 }) {
   // Member IDs for keyboard navigation
   const memberIds = useMemo(() => members.map((m) => m.id), [members])
@@ -94,6 +102,8 @@ const SceneContent = memo(function SceneContent({
         onNavigate={handleNavigate}
         controlsRef={controlsRef}
         enableKeyboardNav={true}
+        onTargetChange={onCameraTargetChange}
+        navigateToPosition={navigateToPosition}
       />
 
       {/* Galaxy nodes - glowing orbs */}
@@ -144,6 +154,8 @@ export function TreeScene({
   relationships,
   selectedMemberId,
   onMemberSelect,
+  onCameraTargetChange,
+  navigateToPosition,
 }: TreeSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
@@ -191,6 +203,8 @@ export function TreeScene({
         selectedMemberId={selectedMemberId}
         onMemberSelect={onMemberSelect}
         controlsRef={controlsRef}
+        onCameraTargetChange={onCameraTargetChange}
+        navigateToPosition={navigateToPosition}
       />
     </Canvas>
   )

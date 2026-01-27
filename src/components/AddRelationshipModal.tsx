@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useRef, useCallback, type FormEvent } from 'react'
 import type { FamilyMember, RelationshipType } from '../models'
+import { formatDate, displayToIso, isValidDisplayDate } from '../utils/dateUtils'
 
 interface AddRelationshipModalProps {
   isOpen: boolean
@@ -185,13 +186,16 @@ export function AddRelationshipModal({
       }
     }
 
-    // Validate marriage date if provided
+    // Validate marriage date if provided (format: dd/mm/yyyy)
     if (marriageDate) {
-      const date = new Date(marriageDate)
-      if (isNaN(date.getTime())) {
-        newErrors.marriageDate = 'Invalid date format'
-      } else if (date > new Date()) {
-        newErrors.marriageDate = 'Marriage date cannot be in the future'
+      if (!isValidDisplayDate(marriageDate)) {
+        newErrors.marriageDate = 'Invalid date format (use dd/mm/yyyy)'
+      } else {
+        const isoDate = displayToIso(marriageDate)
+        const date = new Date(isoDate)
+        if (date > new Date()) {
+          newErrors.marriageDate = 'Marriage date cannot be in the future'
+        }
       }
     }
 
@@ -217,12 +221,12 @@ export function AddRelationshipModal({
       if (isCreatingNewMember && onCreateMember) {
         actualPerson2Id = await onCreateMember({
           name: newMemberName.trim(),
-          dateOfBirth: newMemberDob || undefined,
+          dateOfBirth: newMemberDob ? displayToIso(newMemberDob) : undefined,
         })
       }
 
       const metadata =
-        relationshipType === 'spouse' && marriageDate ? { marriageDate } : undefined
+        relationshipType === 'spouse' && marriageDate ? { marriageDate: displayToIso(marriageDate) } : undefined
 
       // For parent-child with 'add-parent' direction, swap the IDs
       // because person1 is always parent and person2 is always child in the data model
@@ -461,11 +465,12 @@ export function AddRelationshipModal({
                   Date of Birth
                 </label>
                 <input
-                  type="date"
+                  type="text"
                   id="newMemberDob"
                   value={newMemberDob}
                   onChange={(e) => setNewMemberDob(e.target.value)}
                   disabled={isSubmitting}
+                  placeholder="dd/mm/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100"
                 />
               </div>
@@ -482,11 +487,12 @@ export function AddRelationshipModal({
                 Marriage Date
               </label>
               <input
-                type="date"
+                type="text"
                 id="marriageDate"
                 value={marriageDate}
                 onChange={(e) => setMarriageDate(e.target.value)}
                 disabled={isSubmitting}
+                placeholder="dd/mm/yyyy"
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 ${
                   errors.marriageDate ? 'border-red-500' : 'border-gray-300'
                 }`}
@@ -513,7 +519,7 @@ export function AddRelationshipModal({
                   }
                 }
                 if (relationshipType === 'spouse') {
-                  return <>{person1Name} and {person2Name} are spouses{marriageDate && ` (married ${marriageDate})`}</>
+                  return <>{person1Name} and {person2Name} are spouses{marriageDate && ` (married ${formatDate(marriageDate)})`}</>
                 }
                 if (relationshipType === 'sibling') {
                   return <>{person1Name} and {person2Name} are siblings</>

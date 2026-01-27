@@ -80,7 +80,7 @@ describe('EditMemberModal', () => {
       )
 
       expect(screen.getByLabelText(/name/i)).toHaveValue('John Doe')
-      expect(screen.getByLabelText(/date of birth/i)).toHaveValue('1990-05-15')
+      expect(screen.getByLabelText(/date of birth/i)).toHaveValue('15/05/1990')
       expect(screen.getByLabelText(/place of birth/i)).toHaveValue('New York, USA')
       expect(screen.getByLabelText(/notes/i)).toHaveValue('Some notes about John')
     })
@@ -145,7 +145,7 @@ describe('EditMemberModal', () => {
       )
 
       const dodInput = screen.getByLabelText(/date of death/i)
-      fireEvent.change(dodInput, { target: { value: '1980-01-01' } })
+      fireEvent.change(dodInput, { target: { value: '01/01/1980' } })
 
       fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
 
@@ -356,7 +356,7 @@ describe('EditMemberModal', () => {
 
       await waitFor(() => {
         expect(screen.getByLabelText(/name/i)).toHaveValue('Jane Doe')
-        expect(screen.getByLabelText(/date of birth/i)).toHaveValue('1985-03-20')
+        expect(screen.getByLabelText(/date of birth/i)).toHaveValue('20/03/1985')
       })
     })
   })

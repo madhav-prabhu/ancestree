@@ -89,3 +89,9 @@ Family trees are **graphs** (not pure trees) because marriages connect branches:
 - **Storage Abstraction**: All data access through service layer (enables cloud migration)
 - **Agent Boundaries**: Each agent owns specific directories—coordinate via Orchestrator
 - **Local-First**: Data stored in browser (IndexedDB), exportable as JSON
+
+## Working Style Preferences
+
+- **Always use agents**: For any implementation task, spawn the appropriate specialized agent (Frontend, 3D, Data) rather than implementing directly. This preserves context and leverages domain expertise.
+- **Parallel agent execution**: When tasks can be done independently, spawn multiple agents in parallel.
+- **Verify after implementation**: Always run the Verification Agent or `npm run build && npm run test` after changes.

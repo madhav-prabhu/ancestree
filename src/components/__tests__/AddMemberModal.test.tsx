@@ -7,6 +7,12 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AddMemberModal } from '../AddMemberModal'
 
+/** Convert ISO date (YYYY-MM-DD) to display format (dd/mm/yyyy) for test input */
+function toDisplayDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split('-')
+  return `${day}/${month}/${year}`
+}
+
 describe('AddMemberModal', () => {
   const mockOnClose = vi.fn()
   const mockOnSubmit = vi.fn()
@@ -73,7 +79,7 @@ describe('AddMemberModal', () => {
       const futureDateStr = futureDate.toISOString().split('T')[0]
 
       const dobInput = screen.getByLabelText(/date of birth/i)
-      fireEvent.change(dobInput, { target: { value: futureDateStr } })
+      fireEvent.change(dobInput, { target: { value: toDisplayDate(futureDateStr) } })
 
       fireEvent.click(screen.getByRole('button', { name: /add member/i }))
 
@@ -91,8 +97,8 @@ describe('AddMemberModal', () => {
       const dobInput = screen.getByLabelText(/date of birth/i)
       const dodInput = screen.getByLabelText(/date of death/i)
 
-      fireEvent.change(dobInput, { target: { value: '2000-01-01' } })
-      fireEvent.change(dodInput, { target: { value: '1999-01-01' } })
+      fireEvent.change(dobInput, { target: { value: '01/01/2000' } })
+      fireEvent.change(dodInput, { target: { value: '01/01/1999' } })
 
       fireEvent.click(screen.getByRole('button', { name: /add member/i }))
 
@@ -110,7 +116,7 @@ describe('AddMemberModal', () => {
       await user.type(screen.getByLabelText(/name/i), 'John Doe')
 
       const dobInput = screen.getByLabelText(/date of birth/i)
-      fireEvent.change(dobInput, { target: { value: '1990-05-15' } })
+      fireEvent.change(dobInput, { target: { value: '15/05/1990' } })
 
       await user.type(screen.getByLabelText(/place of birth/i), 'New York')
       await user.type(screen.getByLabelText(/notes/i), 'Test notes')
