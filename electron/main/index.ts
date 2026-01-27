@@ -18,6 +18,9 @@ let cleanupWindowState: (() => void) | null = null
 let isDirty = false
 let currentFilePath: string | null = null
 
+// Track pending action after save (for New/Close coordination)
+let pendingActionAfterSave: 'new' | 'close' | null = null
+
 /**
  * Single instance lock to prevent multiple instances
  * Multiple instances can cause IndexedDB locking issues
@@ -144,6 +147,26 @@ function createWindow(): void {
 }
 
 /**
+ * Show confirmation dialog for unsaved changes
+ * @returns 'save' | 'discard' | 'cancel' based on user choice
+ */
+async function confirmDiscardChanges(): Promise<'save' | 'discard' | 'cancel'> {
+  const result = await dialog.showMessageBox(mainWindow!, {
+    type: 'question',
+    buttons: ['Save', "Don't Save", 'Cancel'],
+    defaultId: 0,
+    cancelId: 2,
+    title: 'Unsaved Changes',
+    message: 'Save changes?',
+    detail: 'Your changes will be lost if you don\'t save.'
+  })
+
+  if (result.response === 0) return 'save'
+  if (result.response === 1) return 'discard'
+  return 'cancel'
+}
+
+/**
  * Setup dirty state tracking and close confirmation
  * Must be called after mainWindow is created
  */
@@ -176,33 +199,63 @@ function setupDirtyStateHandling(): void {
 
   ipcMain.handle('document:getDirty', () => isDirty)
 
+  // Handle save completion notification from renderer
+  // Used for save-then-continue flow (New/Close after Save)
+  ipcMain.handle('save:completed', () => {
+    if (pendingActionAfterSave === 'new') {
+      // Save completed, now proceed with New
+      mainWindow!.webContents.send('file:proceedWithNew')
+      pendingActionAfterSave = null
+    } else if (pendingActionAfterSave === 'close') {
+      // Save completed, now close window
+      isDirty = false
+      pendingActionAfterSave = null
+      mainWindow!.close()
+    }
+    return true
+  })
+
+  // Handle menu:new with dirty check
+  // Renderer sends this when user clicks File > New
+  ipcMain.on('menu:new', async () => {
+    if (!isDirty) {
+      // Not dirty, renderer handles immediately
+      return
+    }
+
+    // Document is dirty, show confirmation dialog
+    const choice = await confirmDiscardChanges()
+
+    if (choice === 'save') {
+      // Set pending action, then trigger save
+      pendingActionAfterSave = 'new'
+      mainWindow!.webContents.send('menu:save')
+    } else if (choice === 'discard') {
+      // Discard changes, proceed with New
+      isDirty = false
+      mainWindow!.webContents.send('file:proceedWithNew')
+    }
+    // Cancel: do nothing, keep current document
+  })
+
   // Handle window close with unsaved changes confirmation
   mainWindow!.on('close', async (event) => {
     if (!isDirty) return // Allow close if no unsaved changes
 
     event.preventDefault()
 
-    const result = await dialog.showMessageBox(mainWindow!, {
-      type: 'question',
-      buttons: ['Save', "Don't Save", 'Cancel'],
-      defaultId: 0,
-      cancelId: 2,
-      title: 'Unsaved Changes',
-      message: 'Do you want to save changes?',
-      detail: 'Your changes will be lost if you close without saving.'
-    })
+    const choice = await confirmDiscardChanges()
 
-    if (result.response === 0) {
-      // Save - send to renderer, renderer will save then close
+    if (choice === 'save') {
+      // Set pending action, then trigger save
+      pendingActionAfterSave = 'close'
       mainWindow!.webContents.send('menu:save')
-      // After save completes, renderer should call window.close() again
-      // Note: renderer needs to set isDirty=false after successful save
-    } else if (result.response === 1) {
+    } else if (choice === 'discard') {
       // Don't Save - force close by clearing dirty flag first
       isDirty = false
       mainWindow!.close()
     }
-    // Cancel (response === 2): do nothing, keep window open
+    // Cancel: do nothing, keep window open
   })
 }
 
