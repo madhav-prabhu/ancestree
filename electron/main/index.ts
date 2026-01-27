@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
 import { registerFileHandlers } from './ipc/fileHandlers'
 import { createApplicationMenu } from './menu'
+import { registerAutoSaveHandlers, startAutoSave, stopAutoSave } from './services/autoSave'
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null
@@ -123,8 +124,12 @@ function createWindow(): void {
 app.whenReady().then(() => {
   // Register IPC handlers before creating windows
   registerFileHandlers()
+  registerAutoSaveHandlers()
 
   createWindow()
+
+  // Start auto-save timer after window creation
+  startAutoSave()
 
   // Set up application menu (after window exists)
   if (mainWindow) {
@@ -144,4 +149,9 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+})
+
+// Clean up auto-save timer before quitting
+app.on('before-quit', () => {
+  stopAutoSave()
 })
