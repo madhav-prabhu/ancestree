@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 
 ## Current Position
 
-Phase: 4 of 5 (Packaging & Branding)
-Plan: 1 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-27 - Completed 04-01-PLAN.md
+Phase: 4 of 5 (Packaging & Branding) - COMPLETE
+Plan: 2 of 2 in current phase
+Status: All plans executed, pending verification
+Last activity: 2026-01-27 - Completed 04-02-PLAN.md (user verified AppImage)
 
-Progress: [########..] 80%
+Progress: [#########.] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: ~7.1 minutes
-- Total execution time: 56 minutes
+- Total plans completed: 9
+- Average duration: ~6.9 minutes
+- Total execution time: 64 minutes
 
 **By Phase:**
 
@@ -30,11 +30,11 @@ Progress: [########..] 80%
 | 01    | 2/2   | 13m   | 6.5m     |
 | 02    | 4/4   | 31m   | 7.8m     |
 | 03    | 1/1   | 8m    | 8.0m     |
-| 04    | 1/3   | 4m    | 4.0m     |
+| 04    | 2/2   | 12m   | 6.0m     |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (8m), 02-04 (6m), 03-01 (8m), 04-01 (4m)
-- Trend: Improving
+- Last 5 plans: 02-04 (6m), 03-01 (8m), 04-01 (4m), 04-02 (8m)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -49,7 +49,7 @@ Recent decisions affecting current work:
 - Shared codebase: Web and desktop from same React app
 - Native file dialogs: Better UX than browser pickers on desktop
 - **[01-01] Channel allowlist pattern for IPC security**: Prevents renderer from invoking arbitrary handlers
-- **[01-01] Build preload as ESM (.mjs)**: Matches project type:module configuration
+- **[01-01/04-02] Build preload as CJS (.cjs)**: Electron sandbox requires CommonJS for preload scripts
 - **[01-02] HashRouter for Electron**: Required for file:// protocol in production builds
 - **[01-02] BrowserRouter preserved for web**: Cleaner URLs and server-side routing support
 - **[01-02] Platform detection via electronAPI.isElectron**: Reliable flag set by preload script
@@ -70,6 +70,8 @@ Recent decisions affecting current work:
 - **[03-01] Display validation via getAllDisplays**: Handles disconnected monitor recovery
 - **[04-01] sharp over ImageMagick for icon generation**: Node.js native, no system dependency
 - **[04-01] Icon pipeline via npm script**: Reproducible generation from source
+- **[04-02] Notarization graceful skip**: Scripts check for Apple env vars, skip with warning if missing
+- **[04-02] afterSign hook for notarization**: electron-builder calls scripts/notarize.cjs after signing
 
 ### Research Insights
 
@@ -98,6 +100,8 @@ From .planning/research/SUMMARY.md:
 - **electron-store config:** Always include `projectName: 'ancestree'` for dev mode compatibility
 - **Icon pipeline:** Source (1024x1024) -> electron-icon-builder -> all formats
 - **Build resources:** build/ directory for electron-builder assets
+- **Packaging:** `npm run pack:linux` (or :mac, :win) for platform builds
+- **Notarization:** afterSign hook skips gracefully without Apple credentials
 
 ### Pending Todos
 
@@ -110,8 +114,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed 04-01-PLAN.md
+Stopped at: Phase 4 plans complete, pending verification
 Resume file: None
 
 ---
-*Next: 04-02-PLAN.md (macOS Code Signing & Notarization)*
+*Next: Phase 4 verification, then Phase 5 (System Integration)*
