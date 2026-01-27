@@ -54,7 +54,7 @@ function createWindow(): void {
     show: false, // Show when ready to prevent visual flash
     webPreferences: {
       // Preload script path (relative to compiled main process)
-      preload: path.join(__dirname, '../preload/index.mjs'),
+      preload: path.join(__dirname, '../preload/index.cjs'),
 
       // SECURITY: Isolate preload script from renderer context
       contextIsolation: true,
