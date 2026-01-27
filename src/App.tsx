@@ -24,6 +24,7 @@ import {
   AddRelationshipModal,
 } from './components'
 import { Layout, Header, SaveIndicator, EmptyState } from './components/Layout'
+import { UpdateNotification } from './components/UpdateNotification'
 import { exportToJson } from './utils/exportUtils'
 import { exportToGedcom } from './utils/gedcom'
 import { importFromJson } from './utils/importUtils'
@@ -510,6 +511,9 @@ function App() {
 
         {/* Save indicator */}
         <SaveIndicator />
+
+        {/* Update notification (Electron only) */}
+        <UpdateNotification />
 
         {/* Import feedback message */}
         {importMessage && (
