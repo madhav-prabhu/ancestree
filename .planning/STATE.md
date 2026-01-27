@@ -73,6 +73,9 @@ Recent decisions affecting current work:
 - **[04-01] Icon pipeline via npm script**: Reproducible generation from source
 - **[04-02] Notarization graceful skip**: Scripts check for Apple env vars, skip with warning if missing
 - **[04-02] afterSign hook for notarization**: electron-builder calls scripts/notarize.cjs after signing
+- **[05-01] macOS template icons use black + alpha**: System auto-inverts for dark mode
+- **[05-01] Windows ICO multi-resolution**: 16, 24, 32, 48 sizes in single file
+- **[05-01] Platform click behavior**: macOS shows menu, Windows/Linux toggle window
 - **[05-02] autoDownload=false**: User clicks Download button to start download
 - **[05-02] autoInstallOnAppQuit=true**: Silent install when user quits app
 - **[05-02] GitHub Releases as update provider**: Derived owner from git remote
@@ -107,6 +110,9 @@ From .planning/research/SUMMARY.md:
 - **Build resources:** build/ directory for electron-builder assets
 - **Packaging:** `npm run pack:linux` (or :mac, :win) for platform builds
 - **Notarization:** afterSign hook skips gracefully without Apple credentials
+- **Tray icons:** npm run icons:tray generates platform-specific tray icons
+- **Tray module:** Module-level tray reference prevents garbage collection
+- **Tray menu rebuild:** Always call setContextMenu with new Menu.buildFromTemplate for Linux compat
 - **Update IPC channels:** update:available, update:notAvailable, update:progress, update:downloaded, update:error
 - **Taskbar progress:** setProgressBar during download, -1 to clear
 - **Native notifications:** Notification.isSupported() check before showing
