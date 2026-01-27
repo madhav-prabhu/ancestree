@@ -1,0 +1,37 @@
+/**
+ * Type declarations for the Electron preload API
+ * This interface matches what is exposed via contextBridge in index.ts
+ */
+export interface ElectronAPI {
+  /**
+   * Flag indicating the app is running in Electron context
+   */
+  isElectron: boolean
+
+  /**
+   * Invoke an IPC handler on the main process
+   * Only allowed channels can be invoked
+   *
+   * @param channel - The IPC channel to invoke
+   * @param args - Arguments to pass to the handler
+   * @returns Promise resolving to the handler's return value
+   * @throws Error if channel is not in allowlist
+   */
+  invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
+}
+
+/**
+ * Extend the global Window interface to include electronAPI
+ * This makes window.electronAPI type-safe in renderer code
+ */
+declare global {
+  interface Window {
+    /**
+     * Electron API exposed via contextBridge
+     * Only available when running in Electron context
+     */
+    electronAPI?: ElectronAPI
+  }
+}
+
+export {}
