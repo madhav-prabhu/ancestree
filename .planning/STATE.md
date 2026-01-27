@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Users can visualize and explore their family history through an interactive 3D experience that makes genealogy engaging and intuitive.
-**Current focus:** Phase 4 - Packaging & Branding
+**Current focus:** Phase 5 - System Integration
 
 ## Current Position
 
-Phase: 4 of 5 (Packaging & Branding) - COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase verified and complete
-Last activity: 2026-01-27 - Phase 4 verified (4/4 must-haves passed)
+Phase: 5 of 5 (System Integration)
+Plan: 2 of 3 in current phase
+Status: In progress
+Last activity: 2027-01-27 - Completed 05-02-PLAN.md (Auto-Updater Module)
 
-Progress: [#########.] 90%
+Progress: [##########] 92%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: ~6.9 minutes
-- Total execution time: 64 minutes
+- Total plans completed: 11
+- Average duration: ~6.7 minutes
+- Total execution time: 74 minutes
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [#########.] 90%
 | 02    | 4/4   | 31m   | 7.8m     |
 | 03    | 1/1   | 8m    | 8.0m     |
 | 04    | 2/2   | 12m   | 6.0m     |
+| 05    | 2/3   | 10m   | 5.0m     |
 
 **Recent Trend:**
-- Last 5 plans: 02-04 (6m), 03-01 (8m), 04-01 (4m), 04-02 (8m)
+- Last 5 plans: 03-01 (8m), 04-01 (4m), 04-02 (8m), 05-01 (5m), 05-02 (5m)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -72,6 +73,10 @@ Recent decisions affecting current work:
 - **[04-01] Icon pipeline via npm script**: Reproducible generation from source
 - **[04-02] Notarization graceful skip**: Scripts check for Apple env vars, skip with warning if missing
 - **[04-02] afterSign hook for notarization**: electron-builder calls scripts/notarize.cjs after signing
+- **[05-02] autoDownload=false**: User clicks Download button to start download
+- **[05-02] autoInstallOnAppQuit=true**: Silent install when user quits app
+- **[05-02] GitHub Releases as update provider**: Derived owner from git remote
+- **[05-02] Development guard**: Skip update checks when app.isPackaged is false
 
 ### Research Insights
 
@@ -102,6 +107,9 @@ From .planning/research/SUMMARY.md:
 - **Build resources:** build/ directory for electron-builder assets
 - **Packaging:** `npm run pack:linux` (or :mac, :win) for platform builds
 - **Notarization:** afterSign hook skips gracefully without Apple credentials
+- **Update IPC channels:** update:available, update:notAvailable, update:progress, update:downloaded, update:error
+- **Taskbar progress:** setProgressBar during download, -1 to clear
+- **Native notifications:** Notification.isSupported() check before showing
 
 ### Pending Todos
 
@@ -113,9 +121,9 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-27
-Stopped at: Phase 4 plans complete, pending verification
+Last session: 2027-01-27
+Stopped at: Completed 05-02-PLAN.md (Auto-Updater Module)
 Resume file: None
 
 ---
-*Next: Phase 4 verification, then Phase 5 (System Integration)*
+*Next: 05-03-PLAN.md (IPC Integration)*
