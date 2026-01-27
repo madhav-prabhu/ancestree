@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: File Operations & Menus** - Native file dialogs and application menu with keyboard shortcuts
 - [x] **Phase 3: Window Management** - Persistent window state and platform-native window behavior
 - [x] **Phase 4: Packaging & Branding** - Signed installers for macOS, Windows, and Linux
-- [ ] **Phase 5: System Integration** - System tray, context menu, and auto-updates
+- [x] **Phase 5: System Integration** - System tray, context menu, and auto-updates
 
 ## Phase Details
 
@@ -95,9 +95,9 @@ Plans:
 **Plans**: 3 plans in 2 waves
 
 Plans:
-- [ ] 05-01-PLAN.md — System tray with platform-specific icons and context menu
-- [ ] 05-02-PLAN.md — Auto-updater with electron-updater and GitHub Releases
-- [ ] 05-03-PLAN.md — IPC wiring and main process integration
+- [x] 05-01-PLAN.md — System tray with platform-specific icons and context menu
+- [x] 05-02-PLAN.md — Auto-updater with electron-updater and GitHub Releases
+- [x] 05-03-PLAN.md — IPC wiring and main process integration
 
 ## Progress
 
@@ -110,8 +110,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. File Operations & Menus | 5/5 | Complete | 2026-01-27 |
 | 3. Window Management | 1/1 | Complete | 2026-01-27 |
 | 4. Packaging & Branding | 2/2 | Complete | 2026-01-27 |
-| 5. System Integration | 0/3 | Not started | - |
+| 5. System Integration | 3/3 | Complete | 2026-01-27 |
 
 ---
 *Roadmap created: 2026-01-26*
 *Last updated: 2026-01-27*
+*Milestone complete: 2026-01-27*

@@ -39,17 +39,17 @@ Requirements for desktop app release. Each maps to roadmap phases.
 
 ### Branding & Packaging
 
-- [ ] **BRAND-01**: App has custom icon for macOS (icns), Windows (ico), and Linux (png)
-- [ ] **BRAND-02**: macOS build produces signed .dmg installer
-- [ ] **BRAND-03**: Windows build produces installer (.exe or .msi)
-- [ ] **BRAND-04**: Linux build produces AppImage or .deb package
+- [x] **BRAND-01**: App has custom icon for macOS (icns), Windows (ico), and Linux (png)
+- [x] **BRAND-02**: macOS build produces signed .dmg installer
+- [x] **BRAND-03**: Windows build produces installer (.exe or .msi)
+- [x] **BRAND-04**: Linux build produces AppImage or .deb package
 
 ### System Integration
 
-- [ ] **SYS-01**: System tray icon appears when app is running
-- [ ] **SYS-02**: System tray has context menu (Show Window, Quick Actions, Quit)
-- [ ] **SYS-03**: App checks for updates on launch
-- [ ] **SYS-04**: User can install updates from within the app
+- [x] **SYS-01**: System tray icon appears when app is running
+- [x] **SYS-02**: System tray has context menu (Show Window, Quick Actions, Quit)
+- [x] **SYS-03**: App checks for updates on launch
+- [x] **SYS-04**: User can install updates from within the app
 - [x] **SYS-05**: App works offline (no network required for core functionality)
 
 ## v2 Requirements
@@ -112,14 +112,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WIN-01 | Phase 3 | Complete |
 | WIN-02 | Phase 3 | Complete |
 | WIN-03 | Phase 3 | Complete |
-| BRAND-01 | Phase 4 | Pending |
-| BRAND-02 | Phase 4 | Pending |
-| BRAND-03 | Phase 4 | Pending |
-| BRAND-04 | Phase 4 | Pending |
-| SYS-01 | Phase 5 | Pending |
-| SYS-02 | Phase 5 | Pending |
-| SYS-03 | Phase 5 | Pending |
-| SYS-04 | Phase 5 | Pending |
+| BRAND-01 | Phase 4 | Complete |
+| BRAND-02 | Phase 4 | Complete |
+| BRAND-03 | Phase 4 | Complete |
+| BRAND-04 | Phase 4 | Complete |
+| SYS-01 | Phase 5 | Complete |
+| SYS-02 | Phase 5 | Complete |
+| SYS-03 | Phase 5 | Complete |
+| SYS-04 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 27 total
@@ -128,4 +128,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-27 after Phase 3 completion*
+*Last updated: 2026-01-27 — All v1 requirements complete*
