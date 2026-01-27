@@ -46,13 +46,14 @@ Plans:
   3. File menu has New, Open, Save, Save As, Export, Quit options
   4. Cmd/Ctrl+S saves, Cmd/Ctrl+O opens, Cmd/Ctrl+Q quits
   5. macOS shows "Ancestree" in the menu bar with standard app menu items
-**Plans**: 4 plans in 3 waves
+**Plans**: 5 plans in 3 waves
 
 Plans:
 - [ ] 02-01-PLAN.md — IPC file dialog handlers and preload extension
 - [ ] 02-02-PLAN.md — Application menu with keyboard shortcuts
-- [ ] 02-03-PLAN.md — React hook for file operations and auto-save
-- [ ] 02-04-PLAN.md — GEDCOM export and dirty state tracking
+- [ ] 02-03-PLAN.md — React hook for file operations, auto-save, and menu event wiring
+- [ ] 02-04-PLAN.md — GEDCOM export
+- [ ] 02-05-PLAN.md — Dirty state tracking and close confirmation
 
 ### Phase 3: Window Management
 **Goal**: The app window behaves like a native application with persistent size/position and platform-appropriate window controls
@@ -105,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Electron Foundation | 2/2 | Complete | 2026-01-27 |
-| 2. File Operations & Menus | 0/4 | Not started | - |
+| 2. File Operations & Menus | 0/5 | Not started | - |
 | 3. Window Management | 0/1 | Not started | - |
 | 4. Packaging & Branding | 0/2 | Not started | - |
 | 5. System Integration | 0/2 | Not started | - |
