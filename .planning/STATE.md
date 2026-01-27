@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 ## Current Position
 
 Phase: 2 of 5 (File Operations and Menus)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-27 - Completed 02-01-PLAN.md (IPC File Dialog Handlers)
+Last activity: 2026-01-27 - Completed 02-02-PLAN.md (Application Menus)
 
-Progress: [###.......] 30%
+Progress: [####......] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: ~6.7 minutes
-- Total execution time: 20 minutes
+- Total plans completed: 4
+- Average duration: ~7.5 minutes
+- Total execution time: 30 minutes
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01    | 2/2   | 13m   | 6.5m     |
-| 02    | 1/3   | 7m    | 7m       |
+| 02    | 2/3   | 17m   | 8.5m     |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5m), 01-02 (8m), 02-01 (7m)
-- Trend: Stable
+- Last 5 plans: 01-01 (5m), 01-02 (8m), 02-01 (7m), 02-02 (10m)
+- Trend: Stable (slight increase due to environment debugging)
 
 *Updated after each plan completion*
 
@@ -54,6 +54,9 @@ Recent decisions affecting current work:
 - **[02-01] IPC handlers organized in electron/main/ipc/ directory**: Domain-based organization
 - **[02-01] Channel naming: dialog: and menu: prefixes**: Clear namespacing for IPC channels
 - **[02-01] Main process built as CJS**: ESM imports fail in Electron runtime
+- **[02-02] CommandOrControl accelerator prefix**: Cross-platform keyboard shortcuts
+- **[02-02] Built-in MenuItem roles for Edit menu**: Native undo/redo/clipboard behavior
+- **[02-02] webContents.send for menu actions**: Renderer handles business logic
 
 ### Research Insights
 
@@ -71,6 +74,8 @@ From .planning/research/SUMMARY.md:
 - **IPC handlers:** Create handler file in `electron/main/ipc/`, export `registerXHandlers()`
 - **Preload allowlists:** Separate `ALLOWED_CHANNELS` (invoke) and `ALLOWED_RECEIVE_CHANNELS` (on)
 - **Event listeners:** Return unsubscribe function for cleanup
+- **Menu template:** macOS app menu first only when `process.platform === 'darwin'`
+- **Menu IPC:** `webContents.send('menu:action')` pattern for renderer notification
 
 ### Pending Todos
 
@@ -78,13 +83,13 @@ None.
 
 ### Blockers/Concerns
 
-None.
+- **Environment issue:** Node.js v24 + Electron v40 runtime incompatibility. Code compiles and builds correctly but runtime testing blocked. Not a code issue - recommend using Node.js v20 or v22 LTS for development.
 
 ## Session Continuity
 
-Last session: 2026-01-27 15:23 UTC
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-01-27 15:26 UTC
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
 
 ---
-*Next: 02-02 Application Menu*
+*Next: 02-03 Dirty State and Auto-Save*
