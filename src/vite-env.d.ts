@@ -22,3 +22,5 @@ declare global {
     electronAPI?: ElectronAPI
   }
 }
+
+export {}
