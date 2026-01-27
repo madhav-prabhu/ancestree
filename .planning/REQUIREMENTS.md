@@ -9,18 +9,18 @@ Requirements for desktop app release. Each maps to roadmap phases.
 
 ### Core Desktop
 
-- [ ] **CORE-01**: Electron wrapper successfully runs existing React app
-- [ ] **CORE-02**: Desktop app builds and runs on macOS
-- [ ] **CORE-03**: Desktop app builds and runs on Windows
-- [ ] **CORE-04**: Desktop app builds and runs on Linux
-- [ ] **CORE-05**: Website continues working independently (no regressions)
-- [ ] **CORE-06**: Secure IPC bridge between renderer and main process
+- [x] **CORE-01**: Electron wrapper successfully runs existing React app
+- [x] **CORE-02**: Desktop app builds and runs on macOS
+- [x] **CORE-03**: Desktop app builds and runs on Windows
+- [x] **CORE-04**: Desktop app builds and runs on Linux
+- [x] **CORE-05**: Website continues working independently (no regressions)
+- [x] **CORE-06**: Secure IPC bridge between renderer and main process
 
 ### File Operations
 
 - [ ] **FILE-01**: User can save family tree to filesystem via native save dialog
 - [ ] **FILE-02**: User can open family tree from filesystem via native open dialog
-- [ ] **FILE-03**: External links open in default browser, not in app
+- [x] **FILE-03**: External links open in default browser, not in app
 
 ### Menus & Shortcuts
 
@@ -50,7 +50,7 @@ Requirements for desktop app release. Each maps to roadmap phases.
 - [ ] **SYS-02**: System tray has context menu (Show Window, Quick Actions, Quit)
 - [ ] **SYS-03**: App checks for updates on launch
 - [ ] **SYS-04**: User can install updates from within the app
-- [ ] **SYS-05**: App works offline (no network required for core functionality)
+- [x] **SYS-05**: App works offline (no network required for core functionality)
 
 ## v2 Requirements
 
@@ -93,14 +93,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | Phase 1 | Pending |
-| CORE-02 | Phase 1 | Pending |
-| CORE-03 | Phase 1 | Pending |
-| CORE-04 | Phase 1 | Pending |
-| CORE-05 | Phase 1 | Pending |
-| CORE-06 | Phase 1 | Pending |
-| SYS-05 | Phase 1 | Pending |
-| FILE-03 | Phase 1 | Pending |
+| CORE-01 | Phase 1 | Complete |
+| CORE-02 | Phase 1 | Complete |
+| CORE-03 | Phase 1 | Complete |
+| CORE-04 | Phase 1 | Complete |
+| CORE-05 | Phase 1 | Complete |
+| CORE-06 | Phase 1 | Complete |
+| SYS-05 | Phase 1 | Complete |
+| FILE-03 | Phase 1 | Complete |
 | FILE-01 | Phase 2 | Pending |
 | FILE-02 | Phase 2 | Pending |
 | MENU-01 | Phase 2 | Pending |
@@ -128,4 +128,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-26 after roadmap creation*
+*Last updated: 2026-01-27 after Phase 1 completion*

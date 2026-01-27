@@ -12,7 +12,7 @@ This milestone transforms Ancestree from a web-only application into a cross-pla
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Electron Foundation** - Secure Electron wrapper running existing React app on all platforms
+- [x] **Phase 1: Electron Foundation** - Secure Electron wrapper running existing React app on all platforms
 - [ ] **Phase 2: File Operations & Menus** - Native file dialogs and application menu with keyboard shortcuts
 - [ ] **Phase 3: Window Management** - Persistent window state and platform-native window behavior
 - [ ] **Phase 4: Packaging & Branding** - Signed installers for macOS, Windows, and Linux
@@ -33,8 +33,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 01-01-PLAN.md — Electron setup with secure main process and preload script
-- [ ] 01-02-PLAN.md — Dual-mode router and cross-platform verification
+- [x] 01-01-PLAN.md — Electron setup with secure main process and preload script
+- [x] 01-02-PLAN.md — Dual-mode router and cross-platform verification
 
 ### Phase 2: File Operations & Menus
 **Goal**: Users can save and open family tree files using native OS dialogs, and navigate the app via standard menus and keyboard shortcuts
@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Electron Foundation | 0/2 | Planned | - |
+| 1. Electron Foundation | 2/2 | Complete | 2026-01-27 |
 | 2. File Operations & Menus | 0/2 | Not started | - |
 | 3. Window Management | 0/1 | Not started | - |
 | 4. Packaging & Branding | 0/2 | Not started | - |
@@ -110,4 +110,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 ---
 *Roadmap created: 2026-01-26*
-*Last updated: 2026-01-26*
+*Last updated: 2026-01-27*
