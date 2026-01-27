@@ -9,6 +9,11 @@ export default defineConfig({
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'electron/main/index.ts')
+        },
+        output: {
+          // CommonJS for Electron main process
+          format: 'cjs',
+          entryFileNames: '[name].cjs'
         }
       }
     }
