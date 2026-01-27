@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Users can visualize and explore their family history through an interactive 3D experience that makes genealogy engaging and intuitive.
-**Current focus:** Phase 2 Complete - Ready for Phase 3
+**Current focus:** Phase 3 - Window Management
 
 ## Current Position
 
-Phase: 2 of 5 (File Operations and Menus) - COMPLETE
-Plan: 4 of 4 in current phase
-Status: Phase complete
-Last activity: 2026-01-27 - Completed 02-04-PLAN.md (GEDCOM Export)
+Phase: 3 of 5 (Window Management) - IN PROGRESS
+Plan: 1 of 1 in current phase
+Status: Plan complete
+Last activity: 2026-01-27 - Completed 03-01-PLAN.md (Window State Persistence)
 
-Progress: [######....] 60%
+Progress: [#######...] 70%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: ~7.3 minutes
-- Total execution time: 44 minutes
+- Total plans completed: 7
+- Average duration: ~7.4 minutes
+- Total execution time: 52 minutes
 
 **By Phase:**
 
@@ -29,9 +29,10 @@ Progress: [######....] 60%
 |-------|-------|-------|----------|
 | 01    | 2/2   | 13m   | 6.5m     |
 | 02    | 4/4   | 31m   | 7.8m     |
+| 03    | 1/1   | 8m    | 8.0m     |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (7m), 02-02 (10m), 02-03 (8m), 02-04 (6m)
+- Last 5 plans: 02-02 (10m), 02-03 (8m), 02-04 (6m), 02-05 (pending), 03-01 (8m)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -62,6 +63,10 @@ Recent decisions affecting current work:
 - **[02-03] User confirmation for crash recovery**: Avoids silent data replacement
 - **[02-04] GEDCOM 7.0 format for export**: Modern standard with UTF-8 encoding
 - **[02-04] Separate export handler from save handler**: Different file types (.ged vs .json)
+- **[03-01] 80% of primary display for first-launch window size**: Good balance for 3D visualization
+- **[03-01] 400x300 minimum window dimensions**: Prevents unusably small windows
+- **[03-01] 500ms debounce for window state saves**: Balances responsiveness and disk write frequency
+- **[03-01] Display validation via getAllDisplays**: Handles disconnected monitor recovery
 
 ### Research Insights
 
@@ -84,6 +89,8 @@ From .planning/research/SUMMARY.md:
 - **File operations:** Use `useFileOperations` hook, not direct IPC calls
 - **Auto-save:** Updates on tree data changes via useEffect
 - **Export operations:** Convert data format, then invoke dialog:export IPC
+- **Window state service:** loadWindowState + trackWindowState + cleanup pattern
+- **Debounced saves:** clearTimeout/setTimeout pattern for high-frequency UI events
 
 ### Pending Todos
 
@@ -95,9 +102,9 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-27 15:41 UTC
-Stopped at: Completed 02-04-PLAN.md (GEDCOM Export)
+Last session: 2026-01-27 15:50 UTC
+Stopped at: Completed 03-01-PLAN.md (Window State Persistence)
 Resume file: None
 
 ---
-*Next: Phase 3 - Storage Layer (hybrid IndexedDB/native file approach)*
+*Next: Phase 3 complete - Ready for Phase 4 (Packaging & Distribution)*
