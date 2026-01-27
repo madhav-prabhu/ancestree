@@ -7,7 +7,11 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 const ALLOWED_CHANNELS = [
   'dialog:open',
   'dialog:save',
-  'dialog:saveAs'
+  'dialog:saveAs',
+  'autosave:get',
+  'autosave:clear',
+  'autosave:has',
+  'autosave:update'
 ] as const
 
 /**

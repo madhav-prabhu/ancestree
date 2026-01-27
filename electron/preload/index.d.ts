@@ -17,6 +17,15 @@ export interface SaveFileResult {
 }
 
 /**
+ * Auto-save draft data structure
+ */
+export interface AutoSaveData {
+  filePath: string | null
+  data: unknown
+  timestamp: number
+}
+
+/**
  * Type declarations for the Electron preload API
  * This interface matches what is exposed via contextBridge in index.ts
  */
