@@ -10,10 +10,11 @@
  * - 3D tree visualization
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { TreeScene } from './scene/TreeScene'
 import { MiniMap } from './scene/MiniMap'
 import { useFamilyData } from './hooks/useFamilyData'
+import { useFileOperations } from './hooks/useFileOperations'
 import { calculateTreeLayout, getBoundingBox } from './scene/layout'
 import {
   AddMemberModal,
@@ -25,8 +26,9 @@ import {
 import { Layout, Header, SaveIndicator, EmptyState } from './components/Layout'
 import { exportToJson } from './utils/exportUtils'
 import { importFromJson } from './utils/importUtils'
+import { isElectron } from './utils/platform'
 import type { FamilyMember } from './models/FamilyMember'
-import type { RelationshipType } from './models/Relationship'
+import type { Relationship, RelationshipType } from './models/Relationship'
 import type { CreateMemberInput, UpdateMemberInput } from './services/familyService'
 import type { QuickRelationshipAction } from './components/MemberDetailPanel'
 
@@ -66,6 +68,123 @@ function App() {
     getSiblings,
     getRelationshipsForMember,
   } = useFamilyData()
+
+  // File operations hook for Electron native save/open
+  const fileOps = useFileOperations()
+
+  // Ref to hold current tree data for save operations (avoids stale closures)
+  const treeDataRef = useRef<{ members: FamilyMember[]; relationships: Relationship[] }>({
+    members: [],
+    relationships: []
+  })
+
+  // Update ref when tree data changes
+  useEffect(() => {
+    treeDataRef.current = { members, relationships }
+  }, [members, relationships])
+
+  // Subscribe to menu events from main process (Electron only)
+  useEffect(() => {
+    if (!isElectron()) return
+
+    const unsubscribe = window.electronAPI!.onMenuAction(async (action) => {
+      switch (action) {
+        case 'new':
+          // TODO: Prompt to save if dirty
+          fileOps.newFile()
+          // Reset tree data to initial state
+          await clearAll()
+          sessionStorage.removeItem('ancestree-seeded')
+          setSelectedMember(null)
+          break
+
+        case 'open': {
+          const data = await fileOps.open()
+          if (data) {
+            // Load the data into tree state
+            const fileData = data as { members: FamilyMember[]; relationships: Relationship[] }
+            await clearAll()
+            sessionStorage.removeItem('ancestree-seeded')
+            // Import members first, then relationships
+            for (const member of fileData.members || []) {
+              await addMember({
+                name: member.name,
+                dateOfBirth: member.dateOfBirth,
+                placeOfBirth: member.placeOfBirth,
+                dateOfDeath: member.dateOfDeath,
+                notes: member.notes,
+                photo: member.photo,
+              })
+            }
+            // Note: Relationships would need ID mapping - for now skip
+            // This will be enhanced in future plans
+            setSelectedMember(null)
+          }
+          break
+        }
+
+        case 'save':
+          await fileOps.save(treeDataRef.current)
+          break
+
+        case 'saveAs':
+          await fileOps.saveAs(treeDataRef.current)
+          break
+
+        case 'export':
+          // Use existing export functionality
+          exportToJson(members, relationships)
+          break
+      }
+    })
+
+    return () => unsubscribe()
+  }, [fileOps, clearAll, addMember, members, relationships])
+
+  // Mark dirty and update auto-save when tree data changes
+  useEffect(() => {
+    if (!isElectron()) return
+    // Only mark dirty if there's actual data (not initial empty state)
+    if (members.length > 0 || relationships.length > 0) {
+      fileOps.markDirty()
+      fileOps.updateAutoSave({ members, relationships })
+    }
+  }, [members, relationships, fileOps])
+
+  // Check for draft on mount (crash recovery)
+  useEffect(() => {
+    if (!isElectron()) return
+
+    const checkDraft = async () => {
+      const { hasDraft, draft } = await fileOps.checkForDraft()
+      if (hasDraft && draft) {
+        // Show confirmation dialog for recovery
+        const shouldRecover = confirm('A previous session was not saved. Would you like to recover it?')
+        if (shouldRecover) {
+          const draftData = draft as { members: FamilyMember[]; relationships: Relationship[] }
+          await clearAll()
+          sessionStorage.removeItem('ancestree-seeded')
+          // Import recovered members
+          for (const member of draftData.members || []) {
+            await addMember({
+              name: member.name,
+              dateOfBirth: member.dateOfBirth,
+              placeOfBirth: member.placeOfBirth,
+              dateOfDeath: member.dateOfDeath,
+              notes: member.notes,
+              photo: member.photo,
+            })
+          }
+          setSelectedMember(null)
+        }
+        // Clear draft after handling (whether recovered or dismissed)
+        await fileOps.clearDraft()
+      }
+    }
+
+    checkDraft()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Only on mount
 
   // Calculate positions and bounds for minimap
   const positions = useMemo(

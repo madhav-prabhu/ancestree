@@ -14,6 +14,8 @@ interface ElectronAPI {
   isElectron: boolean
   /** Invoke an IPC handler on the main process (only allowed channels) */
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
+  /** Subscribe to menu action events from main process */
+  onMenuAction: (callback: (action: string) => void) => () => void
 }
 
 declare global {
