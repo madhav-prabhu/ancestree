@@ -25,6 +25,7 @@ import {
 } from './components'
 import { Layout, Header, SaveIndicator, EmptyState } from './components/Layout'
 import { exportToJson } from './utils/exportUtils'
+import { exportToGedcom } from './utils/gedcom'
 import { importFromJson } from './utils/importUtils'
 import { isElectron } from './utils/platform'
 import type { FamilyMember } from './models/FamilyMember'
@@ -131,10 +132,22 @@ function App() {
           await fileOps.saveAs(treeDataRef.current)
           break
 
-        case 'export':
-          // Use existing export functionality
-          exportToJson(members, relationships)
+        case 'export': {
+          // Convert to GEDCOM format
+          const gedcomContent = exportToGedcom(members, relationships)
+
+          // Get suggested filename from current file or default
+          const defaultName = fileOps.fileName
+            ? fileOps.fileName.replace('.json', '.ged')
+            : 'family-tree.ged'
+
+          // Show native export dialog
+          await window.electronAPI!.invoke('dialog:export', {
+            gedcomContent,
+            defaultName
+          })
           break
+        }
       }
     })
 
