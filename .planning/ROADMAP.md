@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Packaging & Branding** - Signed installers for macOS, Windows, and Linux
 - [x] **Phase 5: System Integration** - System tray, context menu, and auto-updates
 - [x] **Phase 6: Update UI Completion** - In-app update notifications with type-safe IPC wiring (GAP CLOSURE)
-- [ ] **Phase 7: File Operations Polish** - Dirty check on New file and save-then-close coordination (GAP CLOSURE)
+- [x] **Phase 7: File Operations Polish** - Dirty check on New file and save-then-close coordination (GAP CLOSURE)
 
 ## Phase Details
 
@@ -128,7 +128,7 @@ Plans:
 **Plans**: 1 plan in 1 wave
 
 Plans:
-- [ ] 07-01-PLAN.md — Dirty check dialog for New and improved close confirmation flow
+- [x] 07-01-PLAN.md — Dirty check dialog for New and improved close confirmation flow
 
 ## Progress
 
@@ -143,7 +143,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Packaging & Branding | 2/2 | Complete | 2026-01-27 |
 | 5. System Integration | 3/3 | Complete | 2026-01-27 |
 | 6. Update UI Completion | 1/1 | Complete | 2026-01-27 |
-| 7. File Operations Polish | 0/1 | Not Started | — |
+| 7. File Operations Polish | 1/1 | Complete | 2026-01-27 |
 
 ---
 *Roadmap created: 2026-01-26*
