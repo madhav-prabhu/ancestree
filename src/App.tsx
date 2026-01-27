@@ -92,9 +92,20 @@ function App() {
     const unsubscribe = window.electronAPI!.onMenuAction(async (action) => {
       switch (action) {
         case 'new':
-          // TODO: Prompt to save if dirty
+          // If dirty, main process handles dialog and sends proceedWithNew when ready
+          if (fileOps.isDirty) {
+            return
+          }
+          // Not dirty, proceed immediately
           fileOps.newFile()
-          // Reset tree data to initial state
+          await clearAll()
+          sessionStorage.removeItem('ancestree-seeded')
+          setSelectedMember(null)
+          break
+
+        case 'proceedWithNew':
+          // Main process confirmed we can proceed with New (after save or discard)
+          fileOps.newFile()
           await clearAll()
           sessionStorage.removeItem('ancestree-seeded')
           setSelectedMember(null)
@@ -125,9 +136,14 @@ function App() {
           break
         }
 
-        case 'save':
-          await fileOps.save(treeDataRef.current)
+        case 'save': {
+          const saved = await fileOps.save(treeDataRef.current)
+          // Signal completion to main process for save-then-continue flow
+          if (saved) {
+            window.electronAPI!.invoke('save:completed')
+          }
           break
+        }
 
         case 'saveAs':
           await fileOps.saveAs(treeDataRef.current)
