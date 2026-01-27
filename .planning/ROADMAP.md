@@ -30,11 +30,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Existing web version at localhost:5173 still works independently
   4. App works offline without network connectivity
   5. External links (help docs, etc.) open in the user's default browser, not in-app
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Electron setup with secure main process and preload script
+- [ ] 01-02-PLAN.md — Dual-mode router and cross-platform verification
 
 ### Phase 2: File Operations & Menus
 **Goal**: Users can save and open family tree files using native OS dialogs, and navigate the app via standard menus and keyboard shortcuts
@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Electron Foundation | 0/2 | Not started | - |
+| 1. Electron Foundation | 0/2 | Planned | - |
 | 2. File Operations & Menus | 0/2 | Not started | - |
 | 3. Window Management | 0/1 | Not started | - |
 | 4. Packaging & Branding | 0/2 | Not started | - |
