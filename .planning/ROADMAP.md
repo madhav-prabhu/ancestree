@@ -13,7 +13,7 @@ This milestone transforms Ancestree from a web-only application into a cross-pla
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Electron Foundation** - Secure Electron wrapper running existing React app on all platforms
-- [ ] **Phase 2: File Operations & Menus** - Native file dialogs and application menu with keyboard shortcuts
+- [x] **Phase 2: File Operations & Menus** - Native file dialogs and application menu with keyboard shortcuts
 - [ ] **Phase 3: Window Management** - Persistent window state and platform-native window behavior
 - [ ] **Phase 4: Packaging & Branding** - Signed installers for macOS, Windows, and Linux
 - [ ] **Phase 5: System Integration** - System tray, context menu, and auto-updates
@@ -49,11 +49,11 @@ Plans:
 **Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 02-01-PLAN.md — IPC file dialog handlers and preload extension
-- [ ] 02-02-PLAN.md — Application menu with keyboard shortcuts
-- [ ] 02-03-PLAN.md — React hook for file operations, auto-save, and menu event wiring
-- [ ] 02-04-PLAN.md — GEDCOM export
-- [ ] 02-05-PLAN.md — Dirty state tracking and close confirmation
+- [x] 02-01-PLAN.md — IPC file dialog handlers and preload extension
+- [x] 02-02-PLAN.md — Application menu with keyboard shortcuts
+- [x] 02-03-PLAN.md — React hook for file operations, auto-save, and menu event wiring
+- [x] 02-04-PLAN.md — GEDCOM export
+- [x] 02-05-PLAN.md — Dirty state tracking and close confirmation
 
 ### Phase 3: Window Management
 **Goal**: The app window behaves like a native application with persistent size/position and platform-appropriate window controls
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Electron Foundation | 2/2 | Complete | 2026-01-27 |
-| 2. File Operations & Menus | 0/5 | Not started | - |
+| 2. File Operations & Menus | 5/5 | Complete | 2026-01-27 |
 | 3. Window Management | 0/1 | Not started | - |
 | 4. Packaging & Branding | 0/2 | Not started | - |
 | 5. System Integration | 0/2 | Not started | - |
