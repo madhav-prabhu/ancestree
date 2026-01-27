@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 ## Current Position
 
 Phase: 2 of 5 (File Operations and Menus) - COMPLETE
-Plan: 3 of 3 in current phase
+Plan: 4 of 4 in current phase
 Status: Phase complete
-Last activity: 2026-01-27 - Completed 02-03-PLAN.md (Dirty State and Auto-Save)
+Last activity: 2026-01-27 - Completed 02-04-PLAN.md (GEDCOM Export)
 
-Progress: [#####.....] 50%
+Progress: [######....] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~7.6 minutes
-- Total execution time: 38 minutes
+- Total plans completed: 6
+- Average duration: ~7.3 minutes
+- Total execution time: 44 minutes
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01    | 2/2   | 13m   | 6.5m     |
-| 02    | 3/3   | 25m   | 8.3m     |
+| 02    | 4/4   | 31m   | 7.8m     |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (8m), 02-01 (7m), 02-02 (10m), 02-03 (8m)
+- Last 5 plans: 02-01 (7m), 02-02 (10m), 02-03 (8m), 02-04 (6m)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -60,6 +60,8 @@ Recent decisions affecting current work:
 - **[02-03] Auto-save interval 30 seconds**: Balance between data safety and write frequency
 - **[02-03] Atomic draft storage via electron-store**: Crash-safe writes
 - **[02-03] User confirmation for crash recovery**: Avoids silent data replacement
+- **[02-04] GEDCOM 7.0 format for export**: Modern standard with UTF-8 encoding
+- **[02-04] Separate export handler from save handler**: Different file types (.ged vs .json)
 
 ### Research Insights
 
@@ -81,6 +83,7 @@ From .planning/research/SUMMARY.md:
 - **Menu IPC:** `webContents.send('menu:action')` pattern for renderer notification
 - **File operations:** Use `useFileOperations` hook, not direct IPC calls
 - **Auto-save:** Updates on tree data changes via useEffect
+- **Export operations:** Convert data format, then invoke dialog:export IPC
 
 ### Pending Todos
 
@@ -92,8 +95,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-27 10:36 UTC
-Stopped at: Completed 02-03-PLAN.md (Phase 2 complete)
+Last session: 2026-01-27 15:41 UTC
+Stopped at: Completed 02-04-PLAN.md (GEDCOM Export)
 Resume file: None
 
 ---
