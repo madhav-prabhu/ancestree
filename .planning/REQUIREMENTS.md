@@ -18,24 +18,24 @@ Requirements for desktop app release. Each maps to roadmap phases.
 
 ### File Operations
 
-- [ ] **FILE-01**: User can save family tree to filesystem via native save dialog
-- [ ] **FILE-02**: User can open family tree from filesystem via native open dialog
+- [x] **FILE-01**: User can save family tree to filesystem via native save dialog
+- [x] **FILE-02**: User can open family tree from filesystem via native open dialog
 - [x] **FILE-03**: External links open in default browser, not in app
 
 ### Menus & Shortcuts
 
-- [ ] **MENU-01**: Application has File menu (New, Open, Save, Save As, Export, Quit)
-- [ ] **MENU-02**: Application has Edit menu (Undo, Redo, Cut, Copy, Paste, Select All)
-- [ ] **MENU-03**: Application has View menu (Zoom In, Zoom Out, Reset Zoom, Toggle DevTools)
-- [ ] **MENU-04**: Application has Help menu (About, Website link)
-- [ ] **MENU-05**: Keyboard shortcuts work (Cmd/Ctrl+S Save, Cmd/Ctrl+O Open, Cmd/Ctrl+Q Quit)
-- [ ] **MENU-06**: macOS menu bar shows app name and standard items
+- [x] **MENU-01**: Application has File menu (New, Open, Save, Save As, Export, Quit)
+- [x] **MENU-02**: Application has Edit menu (Undo, Redo, Cut, Copy, Paste, Select All)
+- [x] **MENU-03**: Application has View menu (Zoom In, Zoom Out, Reset Zoom, Toggle DevTools)
+- [x] **MENU-04**: Application has Help menu (About, Website link)
+- [x] **MENU-05**: Keyboard shortcuts work (Cmd/Ctrl+S Save, Cmd/Ctrl+O Open, Cmd/Ctrl+Q Quit)
+- [x] **MENU-06**: macOS menu bar shows app name and standard items
 
 ### Window Management
 
-- [ ] **WIN-01**: Window size and position persist across app restarts
-- [ ] **WIN-02**: Window uses platform-native title bar and controls
-- [ ] **WIN-03**: App responds to minimize, maximize, close buttons correctly
+- [x] **WIN-01**: Window size and position persist across app restarts
+- [x] **WIN-02**: Window uses platform-native title bar and controls
+- [x] **WIN-03**: App responds to minimize, maximize, close buttons correctly
 
 ### Branding & Packaging
 
@@ -101,17 +101,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CORE-06 | Phase 1 | Complete |
 | SYS-05 | Phase 1 | Complete |
 | FILE-03 | Phase 1 | Complete |
-| FILE-01 | Phase 2 | Pending |
-| FILE-02 | Phase 2 | Pending |
-| MENU-01 | Phase 2 | Pending |
-| MENU-02 | Phase 2 | Pending |
-| MENU-03 | Phase 2 | Pending |
-| MENU-04 | Phase 2 | Pending |
-| MENU-05 | Phase 2 | Pending |
-| MENU-06 | Phase 2 | Pending |
-| WIN-01 | Phase 3 | Pending |
-| WIN-02 | Phase 3 | Pending |
-| WIN-03 | Phase 3 | Pending |
+| FILE-01 | Phase 2 | Complete |
+| FILE-02 | Phase 2 | Complete |
+| MENU-01 | Phase 2 | Complete |
+| MENU-02 | Phase 2 | Complete |
+| MENU-03 | Phase 2 | Complete |
+| MENU-04 | Phase 2 | Complete |
+| MENU-05 | Phase 2 | Complete |
+| MENU-06 | Phase 2 | Complete |
+| WIN-01 | Phase 3 | Complete |
+| WIN-02 | Phase 3 | Complete |
+| WIN-03 | Phase 3 | Complete |
 | BRAND-01 | Phase 4 | Pending |
 | BRAND-02 | Phase 4 | Pending |
 | BRAND-03 | Phase 4 | Pending |
@@ -128,4 +128,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-27 after Phase 1 completion*
+*Last updated: 2026-01-27 after Phase 3 completion*

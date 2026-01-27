@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Electron Foundation** - Secure Electron wrapper running existing React app on all platforms
 - [x] **Phase 2: File Operations & Menus** - Native file dialogs and application menu with keyboard shortcuts
-- [ ] **Phase 3: Window Management** - Persistent window state and platform-native window behavior
+- [x] **Phase 3: Window Management** - Persistent window state and platform-native window behavior
 - [ ] **Phase 4: Packaging & Branding** - Signed installers for macOS, Windows, and Linux
 - [ ] **Phase 5: System Integration** - System tray, context menu, and auto-updates
 
@@ -66,7 +66,7 @@ Plans:
 **Plans**: 1 plan in 1 wave
 
 Plans:
-- [ ] 03-01-PLAN.md — Window state persistence service and main process integration
+- [x] 03-01-PLAN.md — Window state persistence service and main process integration
 
 ### Phase 4: Packaging & Branding
 **Goal**: Users can download and install Ancestree on any platform with professional branding and signed installers
@@ -107,7 +107,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Electron Foundation | 2/2 | Complete | 2026-01-27 |
 | 2. File Operations & Menus | 5/5 | Complete | 2026-01-27 |
-| 3. Window Management | 0/1 | Not started | - |
+| 3. Window Management | 1/1 | Complete | 2026-01-27 |
 | 4. Packaging & Branding | 0/2 | Not started | - |
 | 5. System Integration | 0/2 | Not started | - |
 
