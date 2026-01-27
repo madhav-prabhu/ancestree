@@ -1,23 +1,33 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
 /**
- * Allowed IPC channels for security
+ * Allowed IPC channels for invoke (renderer -> main)
  * Only channels in this list can be invoked from the renderer
- * Add channels here as features are implemented in later phases
  */
-const ALLOWED_CHANNELS: string[] = [
-  // Phase 2 will add file dialog channels:
-  // 'dialog:openFile'
-  // 'dialog:saveFile'
-  // etc.
-]
+const ALLOWED_CHANNELS = [
+  'dialog:open',
+  'dialog:save',
+  'dialog:saveAs'
+] as const
+
+/**
+ * Allowed IPC channels for receiving events (main -> renderer)
+ * Used for menu actions triggered from the native menu bar
+ */
+const ALLOWED_RECEIVE_CHANNELS = [
+  'menu:new',
+  'menu:open',
+  'menu:save',
+  'menu:saveAs',
+  'menu:export'
+] as const
 
 /**
  * Electron API exposed to the renderer process
  * Uses contextBridge for secure IPC communication
  *
  * SECURITY: Never expose raw ipcRenderer methods
- * All IPC calls go through the invoke wrapper with channel allowlist
+ * All IPC calls go through wrappers with channel allowlists
  */
 const electronAPI = {
   /**
@@ -35,11 +45,43 @@ const electronAPI = {
    * @returns Promise resolving to the handler's return value
    * @throws Error if channel is not in allowlist
    */
-  invoke: async (channel: string, ...args: unknown[]): Promise<unknown> => {
-    if (!ALLOWED_CHANNELS.includes(channel)) {
+  invoke: (channel: string, ...args: unknown[]): Promise<unknown> => {
+    if (!ALLOWED_CHANNELS.includes(channel as (typeof ALLOWED_CHANNELS)[number])) {
       throw new Error(`Invalid channel: ${channel}. Channel not in allowlist.`)
     }
     return ipcRenderer.invoke(channel, ...args)
+  },
+
+  /**
+   * Subscribe to menu action events from the main process
+   * Sets up listeners for all allowed receive channels
+   *
+   * @param callback - Function called with action name when menu item clicked
+   * @returns Unsubscribe function to remove all listeners
+   */
+  onMenuAction: (callback: (action: string) => void): (() => void) => {
+    // Create listeners for each allowed receive channel
+    const listeners: Array<{
+      channel: (typeof ALLOWED_RECEIVE_CHANNELS)[number]
+      handler: (_event: IpcRendererEvent) => void
+    }> = []
+
+    for (const channel of ALLOWED_RECEIVE_CHANNELS) {
+      const handler = (_event: IpcRendererEvent): void => {
+        // Extract action name from channel (e.g., 'menu:save' -> 'save')
+        const action = channel.replace('menu:', '')
+        callback(action)
+      }
+      ipcRenderer.on(channel, handler)
+      listeners.push({ channel, handler })
+    }
+
+    // Return unsubscribe function
+    return (): void => {
+      for (const { channel, handler } of listeners) {
+        ipcRenderer.removeListener(channel, handler)
+      }
+    }
   }
 }
 

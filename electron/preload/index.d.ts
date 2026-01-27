@@ -1,4 +1,22 @@
 /**
+ * Result type for file open dialog
+ */
+export interface OpenFileResult {
+  canceled: boolean
+  data: unknown | null
+  filePath: string | null
+  error?: string
+}
+
+/**
+ * Result type for file save dialogs
+ */
+export interface SaveFileResult {
+  canceled: boolean
+  filePath: string | null
+}
+
+/**
  * Type declarations for the Electron preload API
  * This interface matches what is exposed via contextBridge in index.ts
  */
@@ -18,6 +36,14 @@ export interface ElectronAPI {
    * @throws Error if channel is not in allowlist
    */
   invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
+
+  /**
+   * Subscribe to menu action events from the main process
+   *
+   * @param callback - Function called with action name ('new', 'open', 'save', 'saveAs', 'export')
+   * @returns Unsubscribe function to remove all listeners
+   */
+  onMenuAction: (callback: (action: string) => void) => () => void
 }
 
 /**
