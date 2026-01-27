@@ -5,32 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Users can visualize and explore their family history through an interactive 3D experience that makes genealogy engaging and intuitive.
-**Current focus:** Phase 1 Complete - Ready for Phase 2
+**Current focus:** Phase 2 - File Operations and Menus
 
 ## Current Position
 
-Phase: 1 of 5 (Electron Foundation) - COMPLETE
-Plan: 2 of 2 in current phase (all complete)
-Status: Phase complete
-Last activity: 2026-01-27 - Completed 01-02-PLAN.md (Dual-Mode Router)
+Phase: 2 of 5 (File Operations and Menus)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-27 - Completed 02-01-PLAN.md (IPC File Dialog Handlers)
 
-Progress: [##........] 20%
+Progress: [###.......] 30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: ~6.5 minutes
-- Total execution time: 13 minutes
+- Total plans completed: 3
+- Average duration: ~6.7 minutes
+- Total execution time: 20 minutes
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01    | 2/2   | 13m   | 6.5m     |
+| 02    | 1/3   | 7m    | 7m       |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5m), 01-02 (8m)
+- Last 5 plans: 01-01 (5m), 01-02 (8m), 02-01 (7m)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -50,6 +51,9 @@ Recent decisions affecting current work:
 - **[01-02] HashRouter for Electron**: Required for file:// protocol in production builds
 - **[01-02] BrowserRouter preserved for web**: Cleaner URLs and server-side routing support
 - **[01-02] Platform detection via electronAPI.isElectron**: Reliable flag set by preload script
+- **[02-01] IPC handlers organized in electron/main/ipc/ directory**: Domain-based organization
+- **[02-01] Channel naming: dialog: and menu: prefixes**: Clear namespacing for IPC channels
+- **[02-01] Main process built as CJS**: ESM imports fail in Electron runtime
 
 ### Research Insights
 
@@ -64,6 +68,9 @@ From .planning/research/SUMMARY.md:
 - **Platform detection:** Always use `isElectron()` from `src/utils/platform.ts`
 - **Router selection:** Automatic based on environment, no manual configuration
 - **IPC security:** Channel allowlist pattern in preload script
+- **IPC handlers:** Create handler file in `electron/main/ipc/`, export `registerXHandlers()`
+- **Preload allowlists:** Separate `ALLOWED_CHANNELS` (invoke) and `ALLOWED_RECEIVE_CHANNELS` (on)
+- **Event listeners:** Return unsubscribe function for cleanup
 
 ### Pending Todos
 
@@ -75,9 +82,9 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-27 05:29 UTC
-Stopped at: Completed 01-02-PLAN.md (Phase 1 complete)
+Last session: 2026-01-27 15:23 UTC
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
 
 ---
-*Next: Phase 2 - Data Layer*
+*Next: 02-02 Application Menu*
