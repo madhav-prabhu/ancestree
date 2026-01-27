@@ -1,5 +1,7 @@
 import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
+import { registerFileHandlers } from './ipc/fileHandlers'
+import { createApplicationMenu } from './menu'
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null
@@ -119,7 +121,15 @@ function createWindow(): void {
 
 // Create window when Electron is ready
 app.whenReady().then(() => {
+  // Register IPC handlers before creating windows
+  registerFileHandlers()
+
   createWindow()
+
+  // Set up application menu (after window exists)
+  if (mainWindow) {
+    createApplicationMenu(mainWindow)
+  }
 
   // macOS: Re-create window when dock icon clicked and no windows exist
   app.on('activate', () => {
