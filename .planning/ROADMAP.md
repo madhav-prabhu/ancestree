@@ -77,11 +77,11 @@ Plans:
   2. macOS users can install via signed .dmg that passes Gatekeeper
   3. Windows users can install via .exe or .msi installer
   4. Linux users can install via AppImage or .deb package
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Icons and electron-builder configuration
+- [ ] 04-02-PLAN.md — macOS signing infrastructure and Linux build verification
 
 ### Phase 5: System Integration
 **Goal**: Users can access Ancestree from the system tray and receive updates without manual downloads
