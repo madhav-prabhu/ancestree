@@ -73,3 +73,11 @@ deb:
 
 appImage:
   artifactName: ${productName}-${version}.${ext}
+
+# Auto-update configuration
+# electron-updater will check GitHub Releases for updates
+# Owner is derived from git remote or package.json repository field
+publish:
+  provider: github
+  repo: ancestree
+  releaseType: release
