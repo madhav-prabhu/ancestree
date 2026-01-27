@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Users can visualize and explore their family history through an interactive 3D experience that makes genealogy engaging and intuitive.
-**Current focus:** Phase 2 - File Operations and Menus
+**Current focus:** Phase 2 Complete - Ready for Phase 3
 
 ## Current Position
 
-Phase: 2 of 5 (File Operations and Menus)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-27 - Completed 02-02-PLAN.md (Application Menus)
+Phase: 2 of 5 (File Operations and Menus) - COMPLETE
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-01-27 - Completed 02-03-PLAN.md (Dirty State and Auto-Save)
 
-Progress: [####......] 40%
+Progress: [#####.....] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: ~7.5 minutes
-- Total execution time: 30 minutes
+- Total plans completed: 5
+- Average duration: ~7.6 minutes
+- Total execution time: 38 minutes
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01    | 2/2   | 13m   | 6.5m     |
-| 02    | 2/3   | 17m   | 8.5m     |
+| 02    | 3/3   | 25m   | 8.3m     |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5m), 01-02 (8m), 02-01 (7m), 02-02 (10m)
-- Trend: Stable (slight increase due to environment debugging)
+- Last 5 plans: 01-02 (8m), 02-01 (7m), 02-02 (10m), 02-03 (8m)
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -57,6 +57,9 @@ Recent decisions affecting current work:
 - **[02-02] CommandOrControl accelerator prefix**: Cross-platform keyboard shortcuts
 - **[02-02] Built-in MenuItem roles for Edit menu**: Native undo/redo/clipboard behavior
 - **[02-02] webContents.send for menu actions**: Renderer handles business logic
+- **[02-03] Auto-save interval 30 seconds**: Balance between data safety and write frequency
+- **[02-03] Atomic draft storage via electron-store**: Crash-safe writes
+- **[02-03] User confirmation for crash recovery**: Avoids silent data replacement
 
 ### Research Insights
 
@@ -76,6 +79,8 @@ From .planning/research/SUMMARY.md:
 - **Event listeners:** Return unsubscribe function for cleanup
 - **Menu template:** macOS app menu first only when `process.platform === 'darwin'`
 - **Menu IPC:** `webContents.send('menu:action')` pattern for renderer notification
+- **File operations:** Use `useFileOperations` hook, not direct IPC calls
+- **Auto-save:** Updates on tree data changes via useEffect
 
 ### Pending Todos
 
@@ -87,9 +92,9 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-27 15:26 UTC
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-01-27 10:36 UTC
+Stopped at: Completed 02-03-PLAN.md (Phase 2 complete)
 Resume file: None
 
 ---
-*Next: 02-03 Dirty State and Auto-Save*
+*Next: Phase 3 - Storage Layer (hybrid IndexedDB/native file approach)*
