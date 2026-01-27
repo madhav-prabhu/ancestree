@@ -92,11 +92,12 @@ Plans:
   2. Tray icon has context menu with Show Window, Quick Actions, and Quit
   3. App checks for updates on launch and notifies user if available
   4. User can install updates from within the app without visiting website
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md — System tray with platform-specific icons and context menu
+- [ ] 05-02-PLAN.md — Auto-updater with electron-updater and GitHub Releases
+- [ ] 05-03-PLAN.md — IPC wiring and main process integration
 
 ## Progress
 
@@ -109,7 +110,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. File Operations & Menus | 5/5 | Complete | 2026-01-27 |
 | 3. Window Management | 1/1 | Complete | 2026-01-27 |
 | 4. Packaging & Branding | 2/2 | Complete | 2026-01-27 |
-| 5. System Integration | 0/2 | Not started | - |
+| 5. System Integration | 0/3 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-26*
