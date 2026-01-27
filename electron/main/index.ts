@@ -1,10 +1,12 @@
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron'
 import path from 'path'
 import { registerFileHandlers } from './ipc/fileHandlers'
+import { registerUpdateHandlers } from './ipc/updateHandlers'
 import { createApplicationMenu } from './menu'
 import { registerAutoSaveHandlers, startAutoSave, stopAutoSave } from './services/autoSave'
 import { loadWindowState, trackWindowState, getMinimumDimensions } from './services/windowState'
 import { createTray, destroyTray, setCurrentFilename, updateTrayMenu } from './tray'
+import { initAutoUpdater, checkForUpdates } from './updater'
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null
@@ -213,6 +215,7 @@ app.whenReady().then(() => {
   // Register IPC handlers before creating windows
   registerFileHandlers()
   registerAutoSaveHandlers()
+  registerUpdateHandlers()
 
   createWindow()
 
@@ -231,6 +234,16 @@ app.whenReady().then(() => {
   if (mainWindow) {
     createTray(mainWindow)
   }
+
+  // Initialize auto-updater
+  if (mainWindow) {
+    initAutoUpdater(mainWindow)
+  }
+
+  // Check for updates on launch (delay to not block startup)
+  setTimeout(() => {
+    checkForUpdates()
+  }, 3000)
 
   // macOS: Re-create window when dock icon clicked and no windows exist
   app.on('activate', () => {

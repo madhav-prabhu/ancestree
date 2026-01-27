@@ -10,6 +10,7 @@
  */
 import { Tray, Menu, nativeImage, BrowserWindow, app } from 'electron'
 import path from 'path'
+import { checkForUpdates } from './updater'
 
 // Module-level tray reference to prevent garbage collection
 let tray: Tray | null = null
@@ -56,6 +57,14 @@ function buildContextMenu(mainWindow: BrowserWindow): Menu {
     click: () => {
       mainWindow.show()
       mainWindow.focus()
+    }
+  })
+
+  // Check for Updates action
+  menuItems.push({
+    label: 'Check for Updates',
+    click: () => {
+      checkForUpdates()
     }
   })
 
