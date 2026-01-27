@@ -1,7 +1,7 @@
 appId: com.ancestree.app
 productName: Ancestree
 copyright: Copyright © 2026 Ancestree
-afterSign: scripts/notarize.js
+afterSign: scripts/notarize.cjs
 
 directories:
   buildResources: build

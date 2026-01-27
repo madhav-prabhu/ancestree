@@ -2,6 +2,11 @@
   "name": "ancestree",
   "private": true,
   "version": "0.1.0",
+  "description": "Interactive 3D family tree visualization tool",
+  "author": {
+    "name": "Ancestree Team",
+    "email": "ancestree@example.com"
+  },
   "type": "module",
   "main": "./out/main/index.cjs",
   "scripts": {
