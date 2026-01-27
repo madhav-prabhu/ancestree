@@ -8,10 +8,13 @@ const ALLOWED_CHANNELS = [
   'dialog:open',
   'dialog:save',
   'dialog:saveAs',
+  'dialog:export',
   'autosave:get',
   'autosave:clear',
   'autosave:has',
-  'autosave:update'
+  'autosave:update',
+  'document:setDirty',
+  'document:getDirty'
 ] as const
 
 /**

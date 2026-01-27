@@ -16,6 +16,11 @@ interface SaveFileResult {
   filePath: string | null
 }
 
+interface ExportFileResult {
+  canceled: boolean
+  filePath: string | null
+}
+
 /**
  * File filters for JSON family tree files
  */
@@ -157,6 +162,49 @@ async function handleSaveAsDialog(
 }
 
 /**
+ * File filters for GEDCOM files
+ */
+const GEDCOM_FILTERS = [
+  { name: 'GEDCOM Files', extensions: ['ged'] },
+  { name: 'All Files', extensions: ['*'] }
+]
+
+/**
+ * IPC handler for dialog:export
+ * Exports family tree data to GEDCOM format
+ *
+ * @param gedcomContent - The GEDCOM-formatted content to save
+ * @param defaultName - Optional default filename to suggest
+ * @returns ExportFileResult with the saved file path
+ */
+async function handleExportDialog(
+  event: IpcMainInvokeEvent,
+  { gedcomContent, defaultName }: { gedcomContent: string; defaultName?: string }
+): Promise<ExportFileResult> {
+  const parentWindow = getParentWindow(event)
+
+  const suggestedPath = defaultName
+    ? app.getPath('documents') + '/' + defaultName
+    : app.getPath('documents') + '/family-tree.ged'
+
+  const result = await dialog.showSaveDialog({
+    ...(parentWindow && { parentWindow }),
+    title: 'Export Family Tree',
+    defaultPath: suggestedPath,
+    filters: GEDCOM_FILTERS
+  })
+
+  if (result.canceled || !result.filePath) {
+    return { canceled: true, filePath: null }
+  }
+
+  // Write the GEDCOM content directly (already formatted)
+  await writeFile(result.filePath, gedcomContent, 'utf-8')
+
+  return { canceled: false, filePath: result.filePath }
+}
+
+/**
  * Register all file dialog IPC handlers
  * Call this in app.whenReady() before creating windows
  */
@@ -164,4 +212,5 @@ export function registerFileHandlers(): void {
   ipcMain.handle('dialog:open', handleOpenDialog)
   ipcMain.handle('dialog:save', handleSaveDialog)
   ipcMain.handle('dialog:saveAs', handleSaveAsDialog)
+  ipcMain.handle('dialog:export', handleExportDialog)
 }

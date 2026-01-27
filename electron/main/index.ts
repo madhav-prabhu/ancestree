@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron'
 import path from 'path'
 import { registerFileHandlers } from './ipc/fileHandlers'
 import { createApplicationMenu } from './menu'
@@ -6,6 +6,10 @@ import { registerAutoSaveHandlers, startAutoSave, stopAutoSave } from './service
 
 // Keep a global reference to prevent garbage collection
 let mainWindow: BrowserWindow | null = null
+
+// Module-level state for dirty tracking
+let isDirty = false
+let currentFilePath: string | null = null
 
 /**
  * Single instance lock to prevent multiple instances
@@ -117,6 +121,65 @@ function createWindow(): void {
 }
 
 /**
+ * Setup dirty state tracking and close confirmation
+ * Must be called after mainWindow is created
+ */
+function setupDirtyStateHandling(): void {
+  // Register IPC handlers for dirty state
+  ipcMain.handle('document:setDirty', (_event, dirty: boolean, filePath: string | null) => {
+    isDirty = dirty
+    currentFilePath = filePath
+
+    if (mainWindow) {
+      // macOS: dot in close button when document is edited
+      mainWindow.setDocumentEdited(dirty)
+
+      // Update window title with dirty indicator
+      const baseName = filePath
+        ? path.basename(filePath)
+        : 'Untitled'
+      // macOS uses the close button dot, so no asterisk needed
+      // Windows/Linux show asterisk in title
+      const indicator = process.platform === 'darwin' ? '' : (dirty ? ' *' : '')
+      mainWindow.setTitle(`${baseName}${indicator} - Ancestree`)
+    }
+
+    return true
+  })
+
+  ipcMain.handle('document:getDirty', () => isDirty)
+
+  // Handle window close with unsaved changes confirmation
+  mainWindow!.on('close', async (event) => {
+    if (!isDirty) return // Allow close if no unsaved changes
+
+    event.preventDefault()
+
+    const result = await dialog.showMessageBox(mainWindow!, {
+      type: 'question',
+      buttons: ['Save', "Don't Save", 'Cancel'],
+      defaultId: 0,
+      cancelId: 2,
+      title: 'Unsaved Changes',
+      message: 'Do you want to save changes?',
+      detail: 'Your changes will be lost if you close without saving.'
+    })
+
+    if (result.response === 0) {
+      // Save - send to renderer, renderer will save then close
+      mainWindow!.webContents.send('menu:save')
+      // After save completes, renderer should call window.close() again
+      // Note: renderer needs to set isDirty=false after successful save
+    } else if (result.response === 1) {
+      // Don't Save - force close by clearing dirty flag first
+      isDirty = false
+      mainWindow!.close()
+    }
+    // Cancel (response === 2): do nothing, keep window open
+  })
+}
+
+/**
  * App lifecycle event handlers
  */
 
@@ -127,6 +190,9 @@ app.whenReady().then(() => {
   registerAutoSaveHandlers()
 
   createWindow()
+
+  // Setup dirty state tracking and close confirmation
+  setupDirtyStateHandling()
 
   // Start auto-save timer after window creation
   startAutoSave()
