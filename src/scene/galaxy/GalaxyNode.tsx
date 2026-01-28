@@ -113,7 +113,9 @@ export function GalaxyNode({
     if (!dragging) return
     try {
       ;(gl.domElement as HTMLElement).releasePointerCapture(e.pointerId)
-    } catch {}
+    } catch {
+      // Pointer capture may already be released
+    }
     physics.endDrag(member.id)
     setDragging(false)
   }, [dragging, gl.domElement, member.id, physics])
