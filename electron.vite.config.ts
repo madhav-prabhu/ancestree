@@ -1,0 +1,49 @@
+import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
+
+export default defineConfig({
+  main: {
+    plugins: [externalizeDepsPlugin()],
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'electron/main/index.ts')
+        },
+        output: {
+          // CommonJS for Electron main process
+          format: 'cjs',
+          entryFileNames: '[name].cjs'
+        }
+      }
+    }
+  },
+  preload: {
+    plugins: [externalizeDepsPlugin()],
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'electron/preload/index.ts')
+        },
+        output: {
+          // CommonJS required for Electron sandbox
+          format: 'cjs',
+          entryFileNames: '[name].cjs'
+        }
+      }
+    }
+  },
+  renderer: {
+    root: '.',
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'index.html')
+        }
+      },
+      // Use relative paths for file:// protocol compatibility
+      base: './'
+    },
+    plugins: [react()]
+  }
+})

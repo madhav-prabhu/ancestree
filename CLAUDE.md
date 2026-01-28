@@ -4,22 +4,94 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Ancestree is a family tree visualization tool designed to replace static genealogy websites with an interactive 3D experience. The project is in early development.
+Ancestree is a family tree visualization tool designed to replace static genealogy websites with an interactive 3D experience.
 
-## Core Features (Planned)
+## Tech Stack
 
-- **Family Member Management**: Add members with name, date of birth, place of birth, date of death, and notes
-- **3D Visualization**: Interactive tree that users can navigate by moving, scrolling, and clicking nodes
-- **Unlimited Scale**: No restrictions on family tree size
+- **Framework**: React 19 + TypeScript + Vite 7
+- **3D Rendering**: Three.js via react-three-fiber + @react-three/drei
+- **Storage**: Dexie.js (IndexedDB) with abstraction layer for future cloud migration
+- **Styling**: Tailwind CSS v4
+- **Testing**: Vitest + React Testing Library
 
-## Current State
+## Commands
 
-This is a greenfield project. No build system, dependencies, or source code exist yet. Technology stack decisions are pending.
+```bash
+npm run dev       # Start dev server at http://localhost:5173
+npm run build     # TypeScript check + production build
+npm run test      # Run tests once
+npm run test:ui   # Run tests with UI
+npm run lint      # Run ESLint
+npm run preview   # Preview production build
+```
 
-## Architecture Considerations
+## Project Structure
 
-When implementing, consider:
-- **Data Model**: Family members form a graph structure (not a pure tree due to marriages connecting branches)
-- **Relationships**: Parent-child, spouse, and sibling connections need distinct handling
-- **3D Rendering**: Libraries like Three.js or similar will be needed for interactive visualization
-- **Persistence**: Local storage, file-based, or database backend for saving family data
+```
+src/
+├── components/    # React UI components (Frontend Agent domain)
+├── hooks/         # Custom React hooks
+├── scene/         # 3D scene components (3D Agent domain)
+│   ├── TreeScene.tsx   # Main Canvas with lighting and controls
+│   └── FamilyNode.tsx  # Individual 3D node for a family member
+├── services/      # Data layer and storage (Data Agent domain)
+├── models/        # TypeScript interfaces (FamilyMember, Relationship)
+├── test/          # Test setup
+└── App.tsx        # Main app with demo data
+```
+
+## Agent System
+
+This project uses a multi-agent architecture. See `AGENTS.md` for full documentation.
+
+### Quick Reference
+
+| Agent | Location | Domain |
+|-------|----------|--------|
+| Orchestrator | `.claude/agents/orchestrator.md` | Project coordination |
+| Frontend | `.claude/agents/frontend.md` | UI components, hooks, styling |
+| 3D | `.claude/agents/three-d.md` | Three.js, visualization |
+| Data | `.claude/agents/data.md` | Models, storage, persistence |
+| Code Review | `.claude/agents/code-review.md` | Quality checks |
+| **Verification** | `.claude/agents/verification.md` | **Build, test, deploy, confirm** |
+
+### Mandatory Verification
+
+**⚠️ Every feature must be verified before proceeding.** The Orchestrator enforces this workflow:
+
+```
+Implement → Verify → (Pass? Continue : Fix & Re-verify)
+```
+
+Verification includes: build passes, tests pass, dev server runs, feature works.
+
+### Invoking Agents
+
+```
+"Use the Orchestrator agent to implement [feature]"
+"Spin up the 3D agent to create [visualization element]"
+```
+
+### Shared State
+
+Check `.claude/state/decisions.md` for architectural decisions before starting work.
+
+## Core Data Model
+
+Family trees are **graphs** (not pure trees) because marriages connect branches:
+
+- `FamilyMember`: Person with name, dates, birthplace, notes
+- `Relationship`: Connections (parent-child, spouse, sibling)
+- `FamilyTree`: Collection of members and relationships
+
+## Architecture Principles
+
+- **Storage Abstraction**: All data access through service layer (enables cloud migration)
+- **Agent Boundaries**: Each agent owns specific directories—coordinate via Orchestrator
+- **Local-First**: Data stored in browser (IndexedDB), exportable as JSON
+
+## Working Style Preferences
+
+- **Always use agents**: For any implementation task, spawn the appropriate specialized agent (Frontend, 3D, Data) rather than implementing directly. This preserves context and leverages domain expertise.
+- **Parallel agent execution**: When tasks can be done independently, spawn multiple agents in parallel.
+- **Verify after implementation**: Always run the Verification Agent or `npm run build && npm run test` after changes.
