@@ -40,7 +40,7 @@
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.12.0",
     "three": "^0.176.0",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@electron-toolkit/preload": "^3.0.2",
