@@ -16,7 +16,6 @@ let cleanupWindowState: (() => void) | null = null
 
 // Module-level state for dirty tracking
 let isDirty = false
-let currentFilePath: string | null = null
 
 // Track pending action after save (for New/Close coordination)
 let pendingActionAfterSave: 'new' | 'close' | null = null
@@ -115,8 +114,6 @@ function createWindow(): void {
    * Prevent navigating away from the app to external sites
    */
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    const currentURL = mainWindow?.webContents.getURL() || ''
-
     // Allow navigation within the app (same origin or file://)
     if (
       url.startsWith('file://') ||
@@ -174,7 +171,6 @@ function setupDirtyStateHandling(): void {
   // Register IPC handlers for dirty state
   ipcMain.handle('document:setDirty', (_event, dirty: boolean, filePath: string | null) => {
     isDirty = dirty
-    currentFilePath = filePath
 
     if (mainWindow) {
       // macOS: dot in close button when document is edited

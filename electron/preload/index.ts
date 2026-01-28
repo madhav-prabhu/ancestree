@@ -92,7 +92,7 @@ const electronAPI = {
     }> = []
 
     for (const channel of menuChannels) {
-      const handler = (_event: IpcRendererEvent): void => {
+      const handler = (): void => {
         // Extract action name from channel (e.g., 'menu:save' -> 'save', 'file:proceedWithNew' -> 'proceedWithNew')
         const action = channel.split(':')[1]
         callback(action)
