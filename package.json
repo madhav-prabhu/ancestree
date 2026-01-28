@@ -23,6 +23,8 @@
     "icons": "electron-icon-builder --input=./assets/icon-source.png --output=./build",
     "icons:create": "node scripts/create-icon.mjs",
     "icons:tray": "node scripts/create-tray-icons.mjs",
+    "icons:from-svg": "node scripts/convert-svg-to-source.mjs",
+    "icons:all": "npm run icons:from-svg && npm run icons && npm run icons:tray",
     "pack": "electron-vite build && electron-builder --config",
     "pack:win": "electron-vite build && electron-builder --win --config",
     "pack:mac": "electron-vite build && electron-builder --mac --config",
