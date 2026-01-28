@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(bash)",
+      "Bash(export NVM_DIR=\"$HOME/.nvm\")",
+      "Bash([ -s \"$NVM_DIR/nvm.sh\" ])",
+      "Bash(. \"$NVM_DIR/nvm.sh\")",
+      "Bash(nvm install:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version)",
+      "Bash(npm create:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run test:*)",
+      "Bash(timeout 10s npm run dev:*)",
+      "Bash(export PATH=\"/home/madhav/.nvm/versions/node/v24.12.0/bin:$PATH\":*)",
+      "Bash(PATH=\"$HOME/.nvm/versions/node/v22.17.0/bin:$PATH\" npm run build:*)",
+      "Bash(timeout 8s npm run dev:*)"
+    ]
+  },
+  "outputStyle": "Learning"
+}

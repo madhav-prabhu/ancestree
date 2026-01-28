@@ -1,0 +1,83 @@
+appId: com.ancestree.app
+productName: Ancestree
+copyright: Copyright © 2026 Ancestree
+afterSign: scripts/notarize.cjs
+
+directories:
+  buildResources: build
+  output: dist
+
+# Include electron-vite output
+files:
+  - out/**/*
+  - "!**/*.ts"
+  - "!**/node_modules/**/*.{md,txt}"
+
+asar: true
+asarUnpack:
+  - resources/**
+
+# macOS configuration
+mac:
+  category: public.app-category.lifestyle
+  icon: build/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  target:
+    - dmg
+    - zip
+
+dmg:
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+# Windows configuration
+win:
+  icon: build/icon.ico
+  target:
+    - nsis
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+# Linux configuration
+linux:
+  icon: build/icons
+  category: Utility
+  target:
+    - AppImage
+    - deb
+
+deb:
+  depends:
+    - libgtk-3-0
+    - libnotify4
+    - libnss3
+    - libxss1
+    - libxtst6
+    - xdg-utils
+    - libatspi2.0-0
+    - libuuid1
+    - libsecret-1-0
+
+appImage:
+  artifactName: ${productName}-${version}.${ext}
+
+# Auto-update configuration
+# electron-updater will check GitHub Releases for updates
+# Owner is derived from git remote or package.json repository field
+publish:
+  provider: github
+  repo: ancestree
+  releaseType: release
