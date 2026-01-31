@@ -64,7 +64,7 @@
     "electron-icon-builder": "^2.0.1",
     "electron-vite": "^5.0.0",
     "eslint": "^9.28.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.20",
     "fake-indexeddb": "^6.2.5",
     "globals": "^16.2.0",
