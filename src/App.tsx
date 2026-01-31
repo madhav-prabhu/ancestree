@@ -131,6 +131,7 @@ function App() {
                 dateOfDeath: member.dateOfDeath,
                 notes: member.notes,
                 photo: member.photo,
+                position: member.position,
               })
               idMapping.set(member.id, newMember.id)
             }
@@ -237,6 +238,7 @@ function App() {
               dateOfDeath: member.dateOfDeath,
               notes: member.notes,
               photo: member.photo,
+              position: member.position,
             })
             idMapping.set(member.id, newMember.id)
           }
