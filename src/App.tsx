@@ -118,9 +118,13 @@ function App() {
             const fileData = data as { members: FamilyMember[]; relationships: Relationship[] }
             await clearAll()
             sessionStorage.removeItem('ancestree-seeded')
-            // Import members first, then relationships
+
+            // Create ID mapping for old->new member IDs
+            const idMapping = new Map<string, string>()
+
+            // Import members first, tracking ID mapping
             for (const member of fileData.members || []) {
-              await addMember({
+              const newMember = await addMember({
                 name: member.name,
                 dateOfBirth: member.dateOfBirth,
                 placeOfBirth: member.placeOfBirth,
@@ -128,9 +132,29 @@ function App() {
                 notes: member.notes,
                 photo: member.photo,
               })
+              idMapping.set(member.id, newMember.id)
             }
-            // Note: Relationships would need ID mapping - for now skip
-            // This will be enhanced in future plans
+
+            // Import relationships with mapped IDs
+            for (const rel of fileData.relationships || []) {
+              const newPerson1Id = idMapping.get(rel.person1Id)
+              const newPerson2Id = idMapping.get(rel.person2Id)
+              if (newPerson1Id && newPerson2Id) {
+                try {
+                  await addRelationship(
+                    rel.type,
+                    newPerson1Id,
+                    newPerson2Id,
+                    rel.marriageDate || rel.divorceDate
+                      ? { marriageDate: rel.marriageDate, divorceDate: rel.divorceDate }
+                      : undefined
+                  )
+                } catch {
+                  // Skip duplicates (some relationships auto-created by addRelationship logic)
+                }
+              }
+            }
+
             setSelectedMember(null)
           }
           break
@@ -169,7 +193,7 @@ function App() {
     })
 
     return () => unsubscribe()
-  }, [fileOps, clearAll, addMember, members, relationships])
+  }, [fileOps, clearAll, addMember, addRelationship, members, relationships])
 
   // Mark dirty and update auto-save when tree data changes
   useEffect(() => {
