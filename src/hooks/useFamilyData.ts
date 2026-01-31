@@ -5,7 +5,7 @@
  * and mutation methods for CRUD operations.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { familyService, ValidationError } from '../services/familyService'
 import type { FamilyMember, Relationship, RelationshipType } from '../models'
 import type { CreateMemberInput, UpdateMemberInput } from '../services/familyService'
@@ -85,12 +85,19 @@ export function useFamilyData(): FamilyDataState {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
+  // Track if initial load has completed - don't show loading spinner on subsequent refreshes
+  const initialLoadCompleteRef = useRef(false)
+
   /**
    * Load all data from storage.
+   * Only shows loading state on initial load, not on subsequent refreshes.
    */
   const loadData = useCallback(async () => {
     try {
-      setLoading(true)
+      // Only show loading on initial load to avoid flashing the loading screen
+      if (!initialLoadCompleteRef.current) {
+        setLoading(true)
+      }
       setError(null)
 
       const [membersData, relationshipsData] = await Promise.all([
@@ -104,6 +111,7 @@ export function useFamilyData(): FamilyDataState {
       setError(err instanceof Error ? err : new Error('Failed to load data'))
     } finally {
       setLoading(false)
+      initialLoadCompleteRef.current = true
     }
   }, [])
 

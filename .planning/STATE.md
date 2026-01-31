@@ -5,23 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Users can visualize and explore their family history through an interactive 3D experience that makes genealogy engaging and intuitive.
-**Current focus:** Phase 7 - File Operations Polish
+**Current focus:** Phase 8 - Fix UI Bugs
 
 ## Current Position
 
-Phase: 7 of 7 (File Operations Polish) - COMPLETE
-Plan: 1 of 1 in phase (COMPLETE)
-Status: All phases complete
-Last activity: 2026-01-27 - Completed 07-01-PLAN.md (New Action Dirty Check)
+Phase: 8 of 8 (Fix UI Bugs) - COMPLETE
+Plan: 2 of 2 in phase (all complete)
+Status: Phase complete
+Last activity: 2026-01-31 - Completed 08-01-PLAN.md (Relationship Persistence)
+**Next Phase:** None - All phases complete
 
 Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 16
 - Average duration: ~6.2 minutes
-- Total execution time: 87 minutes
+- Total execution time: 99 minutes
 
 **By Phase:**
 
@@ -34,9 +35,10 @@ Progress: [##########] 100%
 | 05    | 3/3   | 13m   | 4.3m     |
 | 06    | 1/1   | 5m    | 5.0m     |
 | 07    | 1/1   | 5m    | 5.0m     |
+| 08    | 2/2   | 12m   | 6.0m     |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (5m), 05-02 (5m), 05-03 (3m), 06-01 (5m), 07-01 (5m)
+- Last 5 plans: 05-03 (3m), 06-01 (5m), 07-01 (5m), 08-02 (6m), 08-01 (6m)
 - Trend: Stable velocity
 
 *Updated after each plan completion*
@@ -91,6 +93,11 @@ Recent decisions affecting current work:
 - **[07-01] pendingActionAfterSave pattern for coordinated flows**: Track pending action, execute after save completion
 - **[07-01] confirmDiscardChanges helper**: Reusable dialog for save/discard/cancel confirmation
 - **[07-01] file: prefix for non-menu IPC channels**: Distinguished from menu: prefix for file operation events
+- **[08-02] Optional position field on FamilyMember**: Backward compatible, no Dexie migration needed
+- **[08-02] Position merge strategy**: Calculate layout first, overlay persisted positions
+- **[08-02] onPositionChange callback on endDrag**: Single save per drag operation
+- **[08-01] ID mapping pattern for import**: Map old->new member IDs, then import relationships with mapped IDs
+- **[08-01] Relationship import try/catch**: Handle auto-created duplicate relationships gracefully
 
 ### Research Insights
 
@@ -133,6 +140,13 @@ From .planning/research/SUMMARY.md:
 - **Notification component:** Self-contained with no App.tsx state management needed
 - **pendingActionAfterSave pattern:** Track pending action, trigger after save completion
 - **confirmDiscardChanges helper:** Reusable dialog for save/discard/cancel confirmation
+- **Position persistence:** onPositionChange callback from physics layer to App
+- **Position merge:** Calculated layout, then overlay member.position if present
+- **ID mapping for import:** Create Map<string, string>, store old->new during member add, use for relationship import
+
+### Roadmap Evolution
+
+- Phase 8 added: Fix UI Bugs (relationship persistence and node position bugs)
 
 ### Pending Todos
 
@@ -144,9 +158,9 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-27
-Stopped at: Completed 07-01-PLAN.md (New Action Dirty Check)
+Last session: 2026-01-31
+Stopped at: Phase 8 execution complete, milestone ready for audit
 Resume file: None
 
 ---
-*All phases complete. Project ready for production release.*
+*Phase 8 complete. All UI bugs fixed - relationships persist on file open/crash recovery, node positions persist across sessions. Gap closure fix applied for position import.*

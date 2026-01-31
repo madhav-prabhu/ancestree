@@ -19,6 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: System Integration** - System tray, context menu, and auto-updates
 - [x] **Phase 6: Update UI Completion** - In-app update notifications with type-safe IPC wiring (GAP CLOSURE)
 - [x] **Phase 7: File Operations Polish** - Dirty check on New file and save-then-close coordination (GAP CLOSURE)
+- [x] **Phase 8: Fix UI Bugs** - Fix data persistence and node position bugs
 
 ## Phase Details
 
@@ -130,10 +131,24 @@ Plans:
 Plans:
 - [x] 07-01-PLAN.md — Dirty check dialog for New and improved close confirmation flow
 
+### Phase 8: Fix UI Bugs
+**Goal**: Fix data persistence issues including relationships lost on refresh and node positions not persisting after drag
+**Depends on**: Phase 7
+**Requirements**: None (bug fixes discovered during testing)
+**Success Criteria** (what must be TRUE):
+  1. Relationships persist correctly when refreshing an unsaved board
+  2. Node positions persist after dragging and are restored on save/refresh
+  3. No data loss scenarios during normal app usage
+**Plans**: 2 plans in 1 wave
+
+Plans:
+- [x] 08-01-PLAN.md - Fix relationship import in Electron file operations
+- [x] 08-02-PLAN.md - Fix node position persistence after dragging
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -144,8 +159,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 5. System Integration | 3/3 | Complete | 2026-01-27 |
 | 6. Update UI Completion | 1/1 | Complete | 2026-01-27 |
 | 7. File Operations Polish | 1/1 | Complete | 2026-01-27 |
+| 8. Fix UI Bugs | 2/2 | Complete | 2026-01-31 |
 
 ---
 *Roadmap created: 2026-01-26*
-*Last updated: 2026-01-27*
+*Last updated: 2026-01-31*
 *Gap closure phases added: 2026-01-27*
