@@ -37,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: Build Electron app
-        run: npm run pack:${{ matrix.platform }}
+        run: npm run pack:${{ matrix.platform }} -- --publish=never
 
       - name: Upload installers to release
         uses: softprops/action-gh-release@v2
