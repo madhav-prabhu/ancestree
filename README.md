@@ -8,6 +8,10 @@
 
 Ancestree is a desktop application for visualizing and exploring your family history through an interactive 3D experience. Unlike static genealogy websites, Ancestree lets you navigate your family tree spatially, making complex relationships intuitive to understand.
 
+<p align="center">
+  <img src="assets/screenshots/1.3d-view.png" alt="Ancestree 3D family tree view" width="800">
+</p>
+
 ## Features
 
 - **3D Visualization** — Navigate your family tree in an interactive 3D space. Zoom, pan, and rotate to explore relationships from any angle.
@@ -51,14 +55,23 @@ sudo dpkg -i ancestree_*_amd64.deb
 ### Creating Your First Family Tree
 
 1. **Launch Ancestree** — The app opens with an empty tree.
-2. **Add a family member** — Click the "Add Person" button or use the form on the left panel.
+2. **Add a family member** — Click the "+ Add Member" button in the top right.
 3. **Enter details** — Fill in name, dates, birthplace, and any notes.
-4. **Create relationships** — Select a person and add their parents, spouse, or children.
+4. **Create relationships** — Select a person and use the quick-add buttons to add parents, spouse, or children.
+
+<p align="center">
+  <img src="assets/screenshots/3.Add.png" alt="Add relationship dialog" width="500">
+</p>
+
 5. **Explore in 3D** — Use your mouse to navigate:
    - **Scroll** — Zoom in/out
    - **Left-click + drag** — Rotate the view
    - **Right-click + drag** — Pan the view
-   - **Click a node** — View person details
+   - **Click a node** — View and edit person details
+
+<p align="center">
+  <img src="assets/screenshots/2.Details.png" alt="Member details panel" width="400">
+</p>
 
 ### Saving Your Work
 
