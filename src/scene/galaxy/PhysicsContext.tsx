@@ -41,10 +41,11 @@ export function usePhysics(): PhysicsContextValue {
 interface PhysicsProviderProps {
   positions: Map<string, { x: number; y: number; z: number }>
   relationships: Array<{ person1Id: string; person2Id: string }>
+  onPositionChange?: (id: string, position: { x: number; y: number; z: number }) => void
   children: React.ReactNode
 }
 
-export function PhysicsProvider({ positions, children }: PhysicsProviderProps) {
+export function PhysicsProvider({ positions, onPositionChange, children }: PhysicsProviderProps) {
   // Store physics state in ref to avoid re-renders
   const nodesRef = useRef<Map<string, PhysicsNode>>(new Map())
   const draggedIdRef = useRef<string | null>(null)
@@ -146,8 +147,14 @@ export function PhysicsProvider({ positions, children }: PhysicsProviderProps) {
       // Update anchor to current position - node stays where dropped
       node.anchorPosition.copy(node.position)
       draggedIdRef.current = null
+      // Persist the new position
+      onPositionChange?.(id, {
+        x: node.position.x,
+        y: node.position.y,
+        z: node.position.z
+      })
     }
-  }, [])
+  }, [onPositionChange])
 
   const isDragging = useCallback((id: string): boolean => {
     return nodesRef.current.get(id)?.isDragging ?? false
