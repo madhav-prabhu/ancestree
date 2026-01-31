@@ -254,9 +254,10 @@ describe('familyService', () => {
 
       await familyService.addRelationship('spouse', alice.id, bob.id)
       await familyService.addRelationship('parent-child', alice.id, charlie.id)
+      // Note: bob→charlie is auto-created since alice and bob are spouses
 
       const relationships = await familyService.getAllRelationships()
-      expect(relationships).toHaveLength(2)
+      expect(relationships).toHaveLength(3)
     })
 
     it('should get relationships for a specific member', async () => {
@@ -297,14 +298,15 @@ describe('familyService', () => {
       child2 = await familyService.addMember({ name: 'Child 2' })
 
       // Set up relationships
+      // Note: When adding a child to a married parent, the child is auto-connected to the spouse
       await familyService.addRelationship('spouse', grandpa.id, grandma.id)
       await familyService.addRelationship('parent-child', grandpa.id, dad.id)
-      await familyService.addRelationship('parent-child', grandma.id, dad.id)
+      // grandma→dad is auto-created since grandpa+grandma are spouses
       await familyService.addRelationship('spouse', dad.id, mom.id)
       await familyService.addRelationship('parent-child', dad.id, child1.id)
-      await familyService.addRelationship('parent-child', mom.id, child1.id)
+      // mom→child1 is auto-created since dad+mom are spouses
       await familyService.addRelationship('parent-child', dad.id, child2.id)
-      await familyService.addRelationship('parent-child', mom.id, child2.id)
+      // mom→child2 is auto-created since dad+mom are spouses
     })
 
     it('should get parents', async () => {
