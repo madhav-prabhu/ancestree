@@ -9,20 +9,20 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 
 ## Current Position
 
-Phase: 8 of 8 (Fix UI Bugs) - IN PROGRESS
-Plan: 1 of 2 in phase (08-02 complete)
-Status: In progress
-Last activity: 2026-01-31 - Completed 08-02-PLAN.md (Node Position Persistence)
-**Next Plan:** 08-01-PLAN.md (Relationship Persistence)
+Phase: 8 of 8 (Fix UI Bugs) - COMPLETE
+Plan: 2 of 2 in phase (all complete)
+Status: Phase complete
+Last activity: 2026-01-31 - Completed 08-01-PLAN.md (Relationship Persistence)
+**Next Phase:** None - All phases complete
 
-Progress: [########--] 93.8%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: ~6.2 minutes
-- Total execution time: 93 minutes
+- Total execution time: 99 minutes
 
 **By Phase:**
 
@@ -35,10 +35,10 @@ Progress: [########--] 93.8%
 | 05    | 3/3   | 13m   | 4.3m     |
 | 06    | 1/1   | 5m    | 5.0m     |
 | 07    | 1/1   | 5m    | 5.0m     |
-| 08    | 1/2   | 6m    | 6.0m     |
+| 08    | 2/2   | 12m   | 6.0m     |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (5m), 05-03 (3m), 06-01 (5m), 07-01 (5m), 08-02 (6m)
+- Last 5 plans: 05-03 (3m), 06-01 (5m), 07-01 (5m), 08-02 (6m), 08-01 (6m)
 - Trend: Stable velocity
 
 *Updated after each plan completion*
@@ -96,6 +96,8 @@ Recent decisions affecting current work:
 - **[08-02] Optional position field on FamilyMember**: Backward compatible, no Dexie migration needed
 - **[08-02] Position merge strategy**: Calculate layout first, overlay persisted positions
 - **[08-02] onPositionChange callback on endDrag**: Single save per drag operation
+- **[08-01] ID mapping pattern for import**: Map old->new member IDs, then import relationships with mapped IDs
+- **[08-01] Relationship import try/catch**: Handle auto-created duplicate relationships gracefully
 
 ### Research Insights
 
@@ -140,6 +142,7 @@ From .planning/research/SUMMARY.md:
 - **confirmDiscardChanges helper:** Reusable dialog for save/discard/cancel confirmation
 - **Position persistence:** onPositionChange callback from physics layer to App
 - **Position merge:** Calculated layout, then overlay member.position if present
+- **ID mapping for import:** Create Map<string, string>, store old->new during member add, use for relationship import
 
 ### Roadmap Evolution
 
@@ -156,8 +159,8 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-31
-Stopped at: Completed 08-02-PLAN.md (Node Position Persistence)
+Stopped at: Completed 08-01-PLAN.md (Relationship Persistence)
 Resume file: None
 
 ---
-*Plan 08-02 complete. Node positions now persist across refresh/save/load.*
+*Phase 8 complete. All UI bugs fixed - relationships persist on file open/crash recovery, node positions persist across sessions.*
