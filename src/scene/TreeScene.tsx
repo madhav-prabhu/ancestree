@@ -27,6 +27,8 @@ interface TreeSceneProps {
   onCameraTargetChange?: (target: { x: number; y: number; z: number }) => void
   /** External navigation request (from minimap) */
   navigateToPosition?: { x: number; y: number; z: number } | null
+  /** Callback when a node's position changes (drag end) */
+  onPositionChange?: (memberId: string, position: { x: number; y: number; z: number }) => void
 }
 
 /**
@@ -44,6 +46,7 @@ const SceneContent = memo(function SceneContent({
   controlsRef,
   onCameraTargetChange,
   navigateToPosition,
+  onPositionChange,
 }: {
   members: FamilyMember[]
   relationships: Relationship[]
@@ -59,6 +62,7 @@ const SceneContent = memo(function SceneContent({
   controlsRef: React.RefObject<OrbitControlsImpl | null>
   onCameraTargetChange?: (target: { x: number; y: number; z: number }) => void
   navigateToPosition?: { x: number; y: number; z: number } | null
+  onPositionChange?: (memberId: string, position: { x: number; y: number; z: number }) => void
 }) {
   // Member IDs for keyboard navigation
   const memberIds = useMemo(() => members.map((m) => m.id), [members])
@@ -75,7 +79,7 @@ const SceneContent = memo(function SceneContent({
   )
 
   return (
-    <PhysicsProvider positions={positions} relationships={relationships}>
+    <PhysicsProvider positions={positions} relationships={relationships} onPositionChange={onPositionChange}>
       {/* Performance monitoring */}
       <PerformanceMonitor />
 
@@ -156,14 +160,21 @@ export function TreeScene({
   onMemberSelect,
   onCameraTargetChange,
   navigateToPosition,
+  onPositionChange,
 }: TreeSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl>(null)
 
-  // Calculate positions from layout algorithm
-  const positions = useMemo(
-    () => calculateTreeLayout(members, relationships),
-    [members, relationships]
-  )
+  // Calculate positions from layout algorithm, then overlay persisted positions
+  const positions = useMemo(() => {
+    const calculated = calculateTreeLayout(members, relationships)
+    // Overlay saved positions from members
+    for (const member of members) {
+      if (member.position) {
+        calculated.set(member.id, member.position)
+      }
+    }
+    return calculated
+  }, [members, relationships])
 
   // Calculate generations for color coding
   const generations = useMemo(
@@ -205,6 +216,7 @@ export function TreeScene({
         controlsRef={controlsRef}
         onCameraTargetChange={onCameraTargetChange}
         navigateToPosition={navigateToPosition}
+        onPositionChange={onPositionChange}
       />
     </Canvas>
   )

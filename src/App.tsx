@@ -224,9 +224,13 @@ function App() {
           const draftData = draft as { members: FamilyMember[]; relationships: Relationship[] }
           await clearAll()
           sessionStorage.removeItem('ancestree-seeded')
-          // Import recovered members
+
+          // Create ID mapping for old->new member IDs
+          const idMapping = new Map<string, string>()
+
+          // Import recovered members, tracking ID mapping
           for (const member of draftData.members || []) {
-            await addMember({
+            const newMember = await addMember({
               name: member.name,
               dateOfBirth: member.dateOfBirth,
               placeOfBirth: member.placeOfBirth,
@@ -234,7 +238,29 @@ function App() {
               notes: member.notes,
               photo: member.photo,
             })
+            idMapping.set(member.id, newMember.id)
           }
+
+          // Import relationships with mapped IDs
+          for (const rel of draftData.relationships || []) {
+            const newPerson1Id = idMapping.get(rel.person1Id)
+            const newPerson2Id = idMapping.get(rel.person2Id)
+            if (newPerson1Id && newPerson2Id) {
+              try {
+                await addRelationship(
+                  rel.type,
+                  newPerson1Id,
+                  newPerson2Id,
+                  rel.marriageDate || rel.divorceDate
+                    ? { marriageDate: rel.marriageDate, divorceDate: rel.divorceDate }
+                    : undefined
+                )
+              } catch {
+                // Skip duplicates (some relationships auto-created by addRelationship logic)
+              }
+            }
+          }
+
           setSelectedMember(null)
         }
         // Clear draft after handling (whether recovered or dismissed)
@@ -324,6 +350,11 @@ function App() {
 
   const handleUpdateMember = useCallback(async (id: string, data: UpdateMemberInput) => {
     await updateMember(id, data)
+  }, [updateMember])
+
+  // Handler for node position changes (drag end)
+  const handlePositionChange = useCallback(async (memberId: string, position: { x: number; y: number; z: number }) => {
+    await updateMember(memberId, { position })
   }, [updateMember])
 
   const handleDeleteMember = useCallback(async (id: string) => {
@@ -510,6 +541,7 @@ function App() {
           onMemberSelect={handleMemberSelect}
           onCameraTargetChange={handleCameraTargetChange}
           navigateToPosition={minimapNavTarget}
+          onPositionChange={handlePositionChange}
         />
 
         {/* MiniMap */}
