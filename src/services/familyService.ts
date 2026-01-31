@@ -236,6 +236,11 @@ export const familyService = {
       await this.connectSpouseToChildren(person1Id, person2Id)
     }
 
+    // For parent-child relationships, automatically connect child to parent's spouse(s)
+    if (type === 'parent-child') {
+      await this.connectChildToParentSpouse(person1Id, person2Id)
+    }
+
     return relationship
   },
 
@@ -265,6 +270,23 @@ export const familyService = {
       const existingRel = await this.findExistingRelationship('parent-child', spouse1Id, child.id)
       if (!existingRel) {
         const rel = createRelationship('parent-child', spouse1Id, child.id)
+        await storage.saveRelationship(rel)
+      }
+    }
+  },
+
+  /**
+   * When a parent-child relationship is created, automatically create a parent-child
+   * relationship between the parent's spouse(s) and the new child.
+   * This ensures children are connected to both parents when parents are married.
+   */
+  async connectChildToParentSpouse(parentId: string, childId: string): Promise<void> {
+    const spouses = await this.getSpouses(parentId)
+
+    for (const spouse of spouses) {
+      const existingRel = await this.findExistingRelationship('parent-child', spouse.id, childId)
+      if (!existingRel) {
+        const rel = createRelationship('parent-child', spouse.id, childId)
         await storage.saveRelationship(rel)
       }
     }
