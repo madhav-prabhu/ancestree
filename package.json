@@ -1,7 +1,7 @@
 {
   "name": "ancestree",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Interactive 3D family tree visualization tool",
   "author": {
     "name": "Ancestree Team",
