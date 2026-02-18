@@ -63,7 +63,7 @@
     "electron-builder": "^26.7.0",
     "electron-icon-builder": "^2.0.1",
     "electron-vite": "^5.0.0",
-    "eslint": "^9.28.0",
+    "eslint": "^10.0.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.5.0",
     "fake-indexeddb": "^6.2.5",
