@@ -41,7 +41,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.0",
-    "three": "^0.182.0",
+    "three": "^0.183.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -55,7 +55,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.1.6",
-    "@types/three": "^0.182.0",
+    "@types/three": "^0.183.1",
     "@types/uuid": "^11.0.0",
     "@vitejs/plugin-react": "^4.5.2",
     "autoprefixer": "^10.4.24",
